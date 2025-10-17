@@ -18,7 +18,7 @@
         *   Demonstrate reduced global memory transactions (HBM reads/writes).
         *   Show high shared memory utilization and bandwidth.
         *   Analyze warp execution efficiency and occupancy.
-<!-- *   **"Lessons Learned":** Your conclusion will extract general lessons for optimizing for GPU memory hierarchy, applicable beyond just attention mechanisms. -->
+<!-- *   **"Lessons Learned":** Conclusion will extract general lessons for optimizing for GPU memory hierarchy, applicable beyond just attention mechanisms. -->
 
 ## Timeline + Milestones
 1.  **September - October:** Literature survey for GPU algo side and math side. Read the FlashAttention paper (v1 and v2) deeply. Study the relevant mathematical background (external memory models, numerical analysis for softmax).
