@@ -153,7 +153,7 @@ __global__ void matrix_transpose(
 }
 
 // naive matmul
-// TODO: change to regular "hello world" cuda matmul
+// TODO: change to Cuda optimized "hello world" cuMatMul
 __global__ void matrix_multiply(
     const float* A,
     const float* B,
