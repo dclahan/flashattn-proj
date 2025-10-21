@@ -86,7 +86,19 @@ __global__ void flash_attn_forward_kernel(
             // 16. Write li <- li_new, mi <- mi_new to global mem (HBM)
         }
         __syncthreads(); 
-        // reasoning QUESTION -> why does this need to be here?
+        // reasoning QUESTION -> why does/not this need to be here?
         // Kj Vj dont rely on li and mi do they?
     }
 }
+
+
+"""
+    TODO:
+        -> finish and refine flash attn
+            -> dynamic block sizes for different GPU sram specs (defined in paper)
+            -> get rid of thread-per-row simplification
+            -> speed up matmul (run on tensorcore?)
+            -> Q,K,V make float16 (can I ?)
+        -> backwards pass
+        -> plug into karpathy gpt model...?
+"""
