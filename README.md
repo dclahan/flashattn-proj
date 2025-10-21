@@ -2,6 +2,11 @@
 
 ## Project Description
 
+**implement scaled dot product attention** 
+```
+(softmax(Q @ K^T * softmax_scale) @ V)
+```
+
 *   **Core CUDA Work:** Implement the FlashAttention-v2 algorithm from the ground up in CUDA.
     *   This is non-trivial and will involve careful management of:
         *   Tiling across GPU blocks and warps.
