@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <cuda.h>
 #include <time.h>
-#include <torch/types.h>
 
-// TODO: implement scaled dot product attention (softmax(Q @ K^T * softmax_scale) @ V)
+// implement scaled dot product attention (softmax(Q @ K^T * softmax_scale) @ V)
 
 // const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
 '''
@@ -39,8 +38,12 @@ __global__ void flash_attn_forward_kernel(
     float* m,
     float* O,
 ) {
-    int tx; int bx; int by; int qkv_offset; int lm_offset;
+    int tx; int bx; int by; int qkv_offset; int lm_offset; 
     int tile_size; float* Qi; float* Kj; float* Vj; float* S;
+    float row_m_prev; float row_l_prev; 
+    float row_m; float row_l;
+    float row_m_new; float row_l_new; 
+    int y; int x; float sum; float pv;
 
     tx = threadIdx.x; bx = blockIdx.x; by = blockIdx.y;
 
@@ -59,38 +62,63 @@ __global__ void flash_attn_forward_kernel(
 
     for (int j = 0; j < Tc; j++){
         // load Kj, Vj into sram
-        for (int x = 0; x < d; x++){
+        for (x = 0; x < d; x++){
             Kj[(tx * d) + x] = K[qkv_offset + (tile_size * j) + (tx * d) + x];
             Vj[(tx * d) + x] = V[qkv_offset + (tile_size * j) + (tx * d) + x];
         }
         __syncthreads();
         for (int i = 0; i < Tr; i++){
-            // load Qi, Oi (? why), li, mi to sram
+            // load Qi to shared mem, li, mi to registers
+            for (x = 0; x < d; x++)
+                Qi[(tx * d) + x] = Q[qkv_offset + (tile_size * i) + (tx * d) + x];
+            row_m_prev = m[lm_offset + (Br * i) + tx];
+            row_l_prev = l[lm_offset + (Br * i) + tx];
 
             // compute Sij = softmax_scale * Qi * Kj^T
+            // m_tilde_ij = rowmax(Sij)
+            row_m = -INFINITY;
+            for (y = 0; y < Bc; y++){
+                sum = 0;
+                for (x = 0; x < d; x++)
+                    sum += Qi[(tx * d) + x] * Kj[(y * d) + x];
+                sum *= softmax_scale;
+                S[(Bc * tx) + y] = sum;
+                if (sum > row_m) row_m = sum; // pain point?
+            }
 
-            // compute Sij_masked = mask(Sij)
 
             // 12. compute
-            // m_tilde_ij = rowmax(Sij_masked)
             // P_tilde_ij = exp(Sij_masked - m_tilde_ij)
             // l_tilde_ij = rowsum(P_tilde_ij)
+            row_l = 0;
+            for (y = 0; y < Bc; y++) {
+                S[(Bc * tx) + y] = __expf(S[(Bc * tx) + y] - row_m);
+                row_l += S[(Bc * tx) + y]; // sram access for above calc... store intermed val in register ?
+            }
 
             // 13. compute mi_new, li_new
-
-            // 14. compute P_tilde_ij_dropped
+            row_m_new = max(row_m_prev, row_m);
+            row_l_new = (__expf(row_m_prev - row_m_new) * row_l_prev) + (__expf(row_m - row_m_new) * row_l);
 
             // 15. Write Oi to global mem
-            // Oi := 
+            for (x = 0; x < d; x++){
+                pv = 0;
+                for (y = 0; y < Bc; y++)
+                    pv += S[(Bc * tx) + y] * Vj[(y * d) + x];
+                O[qkv_offset + (tile_size * i) + (tx * d) + x] = (1 / row_l_new) \
+                    * ((row_l_prev * __expf(row_m_prev - row_m_new) * O[qkv_offset + (tile_size * i) + (tx * d) + x]) \
+                    + (__expf(row_m - row_m_new) * pv));
+            }
 
             // 16. Write li <- li_new, mi <- mi_new to global mem (HBM)
+            m[lm_offset + (Br * i) + tx] = row_m_new;
+            l[lm_offset + (Br * i) + tx] = row_l_new;
         }
         __syncthreads(); 
         // reasoning QUESTION -> why does/not this need to be here?
         // Kj Vj dont rely on li and mi do they?
     }
 }
-
 
 """
     TODO:
