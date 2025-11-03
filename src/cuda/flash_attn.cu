@@ -86,7 +86,6 @@ __global__ void flash_attn_forward_kernel(
                 if (sum > row_m) row_m = sum; // pain point?
             }
 
-
             // 12. compute
             // P_tilde_ij = exp(Sij_masked - m_tilde_ij)
             // l_tilde_ij = rowsum(P_tilde_ij)
@@ -116,7 +115,7 @@ __global__ void flash_attn_forward_kernel(
         }
         __syncthreads(); 
         // reasoning QUESTION -> why does/not this need to be here?
-        // Kj Vj dont rely on li and mi do they?
+        // Kj Vj do they rely on li and mi?
     }
 }
 
@@ -130,3 +129,70 @@ __global__ void flash_attn_forward_kernel(
         -> backwards pass
         -> plug into karpathy gpt model...?
 """
+
+float* forward(
+        float* Q, float* K, float* V, 
+        int B, int nh, int N, int d
+    ) {
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
+    const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
+    const int Br = min(Bc,d);
+
+    const int Tc = ceil((float)N / Bc); 
+    const int Tr = ceil((float)N / Br);
+    const float softmax_scale = 1.0f / sqrtf((float)d);
+
+    // Initialize O, l, m on GPU
+    float *O, *l, *m;
+    size_t Q_size = B * nh * N * d * sizeof(float);
+    size_t l_m_size = B * nh * N * sizeof(float);
+    
+    // Allocate GPU memory
+    cudaMalloc(&O, Q_size);
+    cudaMalloc(&l, l_m_size);
+    cudaMalloc(&m, l_m_size);
+    
+    // Initialize O to zeros, l to zeros, m to -INFINITY
+    cudaMemset(O, 0, Q_size);
+    cudaMemset(l, 0, l_m_size);
+    cudaMemset(m, 0, l_m_size); // We'll set to -INF later
+    
+    // Set m to -INFINITY using a simple kernel or cudaMemcpy
+    float* m_host = new float[B * nh * N];
+    for (int i = 0; i < B * nh * N; i++) {
+        m_host[i] = -INFINITY;
+    }
+    cudaMemcpy(m, m_host, l_m_size, cudaMemcpyHostToDevice);
+    delete[] m_host;
+
+    // Calculate SRAM size needed per block
+    const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
+    int max_sram_size;
+    cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
+    printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
+
+    // Set up grid and block dimensions
+    dim3 grid_dim(B, nh);  // batch_size x num_heads
+    dim3 block_dim(Bc);    // Bc threads per block
+
+    // Launch kernel
+    forward_kernel<<<grid_dim, block_dim, sram_size>>>(
+        Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
+    );
+    
+    // Check for kernel launch errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+    }
+    
+    // Synchronize to make sure kernel completes
+    cudaDeviceSynchronize();
+    
+    cudaFree(l);
+    cudaFree(m);
+    
+    return O;
+}
