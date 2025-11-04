@@ -1,4 +1,3 @@
-// benchmark_attention.cu
 #include <stdio.h>
 #include <stdlib.h>
 #include <cuda.h>
@@ -9,19 +8,15 @@
 #include <vector>
 #include <algorithm>
 
-// Forward declarations
 #include "cuda/flash_attn.h"
 #include "cuda/naive_attn.h"
 
-// Global configuration
 const int B = 1;  // batch size
 const int nh = 8; // number of heads
 const int N = 4096; // sequence length
 const int d = 1024; // head dimension
 
-// Utility functions
 void initialize_matrices(float* Q, float* K, float* V, int size_Q, int size_KV) {
-    // Initialize with pseudo-random values
     for (int i = 0; i < size_Q; ++i) {
         Q[i] = ((i * 7) % 31) * 0.1f - 1.5f;
     }
