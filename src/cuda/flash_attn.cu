@@ -14,13 +14,11 @@
     const int Br = std::min(Bc,d);
 '''
 
-// TODO: move to like a `flash_attn.h` file?
-__global__ void flash_attn_forward_kernel(
-    const float *, const float *, const float *, 
-    const int, const int, const int, 
-    const int, const int, const int, 
-    const float, float*, float*, float*);
-// __global__ void flash_attn_backward_kernel();
+// __global__ void flash_attn_forward_kernel(
+//     const float *, const float *, const float *, 
+//     const int, const int, const int, 
+//     const int, const int, const int, 
+//     const float, float*, float*, float*);
 
 
 __global__ void flash_attn_forward_kernel( 
@@ -130,7 +128,7 @@ __global__ void flash_attn_forward_kernel(
         -> plug into karpathy gpt model...?
 """
 
-float* forward(
+float* flash_forward(
         float* Q, float* K, float* V, 
         int B, int nh, int N, int d
     ) {

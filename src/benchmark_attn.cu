@@ -10,8 +10,8 @@
 #include <algorithm>
 
 // Forward declarations
-float* flash_forward(float* Q, float* K, float* V, int B, int nh, int N, int d);
-void naive_attention(const float* Q, const float* K, const float* V, float* O, int N, int M, int d);
+#include "cuda/flash_attn.h"
+#include "cuda/naive_attn.h"
 
 // Global configuration
 const int B = 1;  // batch size
