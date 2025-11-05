@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <iostream>
 
+#include "naive_attn.h"
+
 // ****************************
 // GLOBALS
 // ****************************
