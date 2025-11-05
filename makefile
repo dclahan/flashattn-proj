@@ -30,7 +30,7 @@ $(TARGET): $(ALL_OBJS)
 	$(NVCC) $(NVCC_FLAGS) -o $(TARGET) $(ALL_OBJS)
 
 # Compile main benchmark file
-benchmark_attention.o: benchmark_attention.cu
+benchmark_attn.o: benchmark_attn.cu
 	$(NVCC) $(NVCC_FLAGS) $(INCLUDES) -c $< -o $@
 
 # Compile CUDA kernel files
