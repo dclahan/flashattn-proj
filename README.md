@@ -31,6 +31,3 @@
 3.  **November:** Run experiments, profile with Nsight, and collect data. Finalize proofs. Write the final report for the GPU class, ensuring it has all the required sections (Abstract, Intro, Survey, Proposed Idea (your implementation details), Expt. Setup, Analysis, Conclusion).
 4.  **End of November:** Submit the GPU project (code + report).
 5.  **December:** Create your presentation poster for the Math class focused on the two proofs and the experimental validation from your GPU work. Prepare your 8-slide presentation for the GPU class, focusing on the performance results and lessons learned.
-
-
-I am at 3, I have the kernels, just need to run test stuff, move `main` from naive.cu to main and then test both against eachother.

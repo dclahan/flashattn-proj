@@ -16,6 +16,23 @@ const int nh = 8; // number of heads
 const int N = 4096; // sequence length
 const int d = 1024; // head dimension
 
+void print_gpu_info() {
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    
+    std::cout << "=== GPU Information ===" << std::endl;
+    std::cout << "Name: " << prop.name << std::endl;
+    std::cout << "Compute Capability: " << prop.major << "." << prop.minor << std::endl;
+    std::cout << "Global Memory: " << prop.totalGlobalMem / (1024.0 * 1024.0 * 1024.0) << " GB" << std::endl;
+    std::cout << "Shared Memory per Block: " << prop.sharedMemPerBlock / 1024 << " KB" << std::endl;
+    std::cout << "Registers per Block: " << prop.regsPerBlock << std::endl;
+    std::cout << "Warp Size: " << prop.warpSize << std::endl;
+    std::cout << "Max Threads per Block: " << prop.maxThreadsPerBlock << std::endl;
+    std::cout << "Max Threads per SM: " << prop.maxThreadsPerMultiProcessor << std::endl;
+    std::cout << "Number of SMs: " << prop.multiProcessorCount << std::endl;
+    std::cout << "=================================" << std::endl << std::endl;
+}
+
 void initialize_matrices(float* Q, float* K, float* V, int size_Q, int size_KV) {
     for (int i = 0; i < size_Q; ++i) {
         Q[i] = ((i * 7) % 31) * 0.1f - 1.5f;
@@ -193,15 +210,9 @@ void benchmark_attention() {
 
 int main(int argc, char* argv[]) {
     std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
-    
-    // Check CUDA device
-    cudaDeviceProp prop;
-    cudaGetDeviceProperties(&prop, 0);
-    std::cout << "Using GPU: " << prop.name << std::endl;
-    std::cout << "Compute Capability: " << prop.major << "." << prop.minor << std::endl;
-    std::cout << "Shared Memory per Block: " << prop.sharedMemPerBlock / 1024 << " KB" << std::endl;
-    std::cout << std::endl;
 
+    print_gpu_info();
+    
     benchmark_attention();
 
     return 0;

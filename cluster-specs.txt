@@ -1,0 +1,94 @@
+# CIMS cluster info (from website)
++----------------------------------+------------------------------------------------+------------------------------------------------+---------+----------------------------+
+| cuda cluster hostname (ssh into) | CPU                                            | GPU                                            | sys mem | OS                         |
++----------------------------------+------------------------------------------------+------------------------------------------------+---------+----------------------------+
+| cuda1.cims.nyu.edu               | Two Intel Xeon E5-2680 (2.50 GHz) (24 cores)   | Two GeForce GTX TITAN Black (6 GB memory each) | 256 GB  | Red Hat Enterprise Linux 9 |
+| cuda2.cims.nyu.edu               | Two Intel Xeon E5-2660 (2.60 GHz) (40 cores)   | Two GeForce RTX 2080 Ti (11 GB memory each)    | 256 GB  | Red Hat Enterprise Linux 9 |
+| cuda3.cims.nyu.edu               | Two Intel Xeon Gold 5118 (2.30 GHz) (48 cores) | Two TITAN V (12 GB memory each)                | 128 GB  | Red Hat Enterprise Linux 9 |
+| cuda4.cims.nyu.edu               | Two Intel Xeon Gold 5118 (2.30 GHz) (48 cores) | Two GeForce GTX TITAN X (12 GB memory each)    | 128 GB  | Red Hat Enterprise Linux 9 |
+| cuda5.cims.nyu.edu               | Two Intel Xeon E5-2650 (2.60 GHz) (16 cores)   | One GeForce GTX 4070 (12 GB memory)            | 64 GB   | Red Hat Enterprise Linux 9 |
++----------------------------------+------------------------------------------------+------------------------------------------------+---------+----------------------------+
+
+
+# Results of nvidia-smi in each cluster
+
+### cuda1:
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.256.02   Driver Version: 470.256.02   CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ...  On   | 00000000:04:00.0 Off |                  N/A |
+| 26%   28C    P8    13W / 250W |      1MiB /  6083MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+|   1  NVIDIA GeForce ...  On   | 00000000:82:00.0 Off |                  N/A |
+| 26%   27C    P8    13W / 250W |      1MiB /  6083MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+
+### cuda2:
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.76.05              Driver Version: 580.76.05      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 2080 Ti     On  |   00000000:83:00.0 Off |                  N/A |
+|  0%   54C    P0             64W /  260W |       1MiB /  11264MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA GeForce RTX 2080 Ti     On  |   00000000:84:00.0 Off |                  N/A |
+|  0%   54C    P0             65W /  260W |       1MiB /  11264MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
+### cuda3:
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.76.05              Driver Version: 580.76.05      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA TITAN V                 On  |   00000000:3B:00.0 Off |                  N/A |
+| 28%   27C    P8             22W /  250W |       1MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA TITAN V                 On  |   00000000:D8:00.0 Off |                  N/A |
+| 28%   29C    P8             29W /  250W |       1MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
+### cuda4:
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.76.05              Driver Version: 580.76.05      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce GTX TITAN X     On  |   00000000:3B:00.0 Off |                  N/A |
+| 22%   27C    P8             16W /  250W |       2MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA GeForce GTX TITAN X     On  |   00000000:D8:00.0 Off |                  N/A |
+| 22%   28C    P8             16W /  250W |       2MiB /  12288MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
+### cuda5:
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.76.05              Driver Version: 580.76.05      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4070        On  |   00000000:43:00.0 Off |                  N/A |
+| 30%   60C    P2             55W /  200W |     279MiB /  12282MiB |    100%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
