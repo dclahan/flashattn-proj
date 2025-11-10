@@ -53,7 +53,7 @@ bool validate_results(float* result1, float* result2, int size, float tolerance 
     return true;
 }
 
-void benchmark_attention() {
+int benchmark_attention() {
     std::cout << "=== Attention Mechanism Benchmark ===" << std::endl;
     std::cout << "Configuration: B=" << B << ", nh=" << nh << ", N=" << N << ", d=" << d << std::endl;
     std::cout << "Total Q size: " << (B * nh * N * d * sizeof(float)) / (1024.0 * 1024.0) << " MB" << std::endl;
@@ -206,6 +206,7 @@ void benchmark_attention() {
     std::cout << "To profile with Nsight Compute:" << std::endl;
     std::cout << "  nv-nsight-cu-cli --kernel-id ::flash_attn_forward_kernel:1 ./benchmark_attention" << std::endl;
     std::cout << "  nv-nsight-cu-cli --kernel-id ::matrix_multiply:1 ./benchmark_attention" << std::endl;
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
