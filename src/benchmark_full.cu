@@ -18,9 +18,9 @@ __global__ void matrix_softmax(float*, int, int);
 float* flash_forward(float* , float* , float* , int , int , int , int );
 int naive_attention(const float* , const float* , const float* , float* , int , int , int );
 
-const int B = 1;  // batch size
-const int nh = 8; // number of heads
-const int N = 2048; // sequence length
+const int B = 16;  // batch size
+const int nh = 12; // number of heads
+const int N = 64; // sequence length
 const int d = 64; // head dimension
 
 __global__ void flash_attn_forward_kernel( 
