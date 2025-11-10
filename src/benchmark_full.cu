@@ -329,8 +329,8 @@ void initialize_matrices(float* Q, float* K, float* V, int size_Q, int size_KV) 
 }
 
 bool validate_results(float* result1, float* result2, int size, float tolerance = 1e-4f) {
-    for (int i = 0; i < size; ++i) {
-        if (abs(result1[i] - result2[i]) > tolerance) {
+    for (int i = 0; i < size; i++) {
+        if (std::abs(result1[i] - result2[i]) > tolerance) {
             std::cout << "Mismatch at index " << i << ": " << result1[i] << " vs " << result2[i] << std::endl;
             return false;
         }
