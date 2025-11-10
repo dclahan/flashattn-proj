@@ -213,7 +213,7 @@ __global__ void matrix_softmax(
 }
 
 // 1 naive_attention pass
-void naive_attention(
+int naive_attention(
     const float* Q,
     const float* K,
     const float* V,
@@ -251,4 +251,5 @@ void naive_attention(
 
     cudaFree(K_T);
     cudaFree(scores);
+    return 0;
 }
