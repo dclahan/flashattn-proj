@@ -35,7 +35,7 @@ __global__ void flash_attn_forward_kernel(
     const float softmax_scale,
     float* l,
     float* m,
-    float* O,
+    float* O
 ) {
     int tx; int bx; int by; int qkv_offset; int lm_offset; 
     int tile_size; float* Qi; float* Kj; float* Vj; float* S;
@@ -166,7 +166,7 @@ float* flash_forward(
     dim3 block_dim(Bc);    // Bc threads per block
 
     // Launch kernel
-    forward_kernel<<<grid_dim, block_dim, sram_size>>>(
+    flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
     );
     
