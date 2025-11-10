@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <math_constants.h>
 
 #define CEIL_DIV(x,y) (((x) + (y) - 1) / (y)) 
 
