@@ -14,23 +14,8 @@ __global__ void matrix_transpose(const float*, float* , int, int);
 __global__ void matrix_multiply(const float*, const float*, float*, int, int, int);
 __global__ void array_divide(float*, float, int);
 __global__ void matrix_softmax(float*, int, int);
-__global__ void flash_attn_forward_kernel( 
-    const float *,
-    const float *,
-    const float *,
-    const int ,
-    const int ,
-    const int ,
-    const int ,
-    const int ,
-    const int ,
-    const float,
-    float* ,
-    float* ,
-    float* ,
-);
 float* flash_forward(float* , float* , float* , int , int n, int , int );
-void naive_attention(const float* , const float* , const float* , float* , int , int , int );
+int naive_attention(const float* , const float* , const float* , float* , int , int , int );
 
 const int B = 1;  // batch size
 const int nh = 8; // number of heads
