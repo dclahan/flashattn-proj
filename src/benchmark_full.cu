@@ -191,8 +191,8 @@ __global__ void matrix_transpose(
     float* dst,
     int N, int M
 ) {
-    int row = blockId.x * blockDim.x + threadIdx.x;
-    int col = blockId.y * blockDim.y + threadIdx.y;
+    int row = blockIdx.x * blockDim.x + threadIdx.x;
+    int col = blockIdx.y * blockDim.y + threadIdx.y;
     if (row >= N || col > M) return;
 
     dst[col*N+row] = src[row*M + col];
@@ -206,8 +206,8 @@ __global__ void matrix_multiply(
     float* C,
     int N, int M, int d
 ) {
-    int row = blockId.x * blockDim.x + threadIdx.x;
-    int col = blockId.y * blockDim.y + threadIdx.y;
+    int row = blockIdx.x * blockDim.x + threadIdx.x;
+    int col = blockIdx.y * blockDim.y + threadIdx.y;
     if (row >= N || col > M) return;
     
     float sum = 0.0f;
@@ -234,7 +234,7 @@ __global__ void matrix_softmax(
     float* matrix,
     int N, int M
 ) {
-    int row = blockId.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.x * blockDim.x + threadIdx.x;
     if (row >= N) return;
 
     // find m
