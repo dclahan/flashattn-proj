@@ -15,13 +15,13 @@ __global__ void matrix_transpose(const float*, float* , int, int);
 __global__ void matrix_multiply(const float*, const float*, float*, int, int, int);
 __global__ void array_divide(float*, float, int);
 __global__ void matrix_softmax(float*, int, int);
-float* flash_forward(float* , float* , float* , int , int n, int , int );
+float* flash_forward(float* , float* , float* , int , int , int , int );
 int naive_attention(const float* , const float* , const float* , float* , int , int , int );
 
 const int B = 1;  // batch size
 const int nh = 8; // number of heads
-const int N = 4096; // sequence length
-const int d = 1024; // head dimension
+const int N = 2048; // sequence length
+const int d = 64; // head dimension
 
 __global__ void flash_attn_forward_kernel( 
     const float *Q,
@@ -175,6 +175,7 @@ float* flash_forward(
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
         printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
     }
     
     // Synchronize to make sure kernel completes
