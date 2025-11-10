@@ -114,8 +114,6 @@ __global__ void flash_attn_forward_kernel(
             l[lm_offset + (Br * i) + tx] = row_l_new;
         }
         __syncthreads(); 
-        // reasoning QUESTION -> why does/not this need to be here?
-        // Kj Vj do they rely on li and mi?
     }
 }
 
@@ -123,11 +121,13 @@ float* flash_forward(
         float* Q, float* K, float* V, 
         int B, int nh, int N, int d
     ) {
-    cudaDeviceProp prop;
-    cudaGetDeviceProperties(&prop, 0);
-    // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
-    const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-    const int Br = min(Bc,d);
+    // cudaDeviceProp prop;
+    // cudaGetDeviceProperties(&prop, 0);
+    // // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
+    // const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
+    // const int Br = min(Bc,d);
+    const int Bc = 32;
+    const int Br = 32;
 
     const int Tc = ceil((float)N / Bc); 
     const int Tr = ceil((float)N / Br);
