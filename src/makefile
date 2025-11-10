@@ -27,11 +27,11 @@ NSIGHT_FLAGS = -lineinfo -src-in-ptx
 
 # GPU Architecture mapping
 GPU_ARCHS = \
-	cuda1:sm_35 \
-	cuda2:sm_75 \
-	cuda3:sm_70 \
-	cuda4:sm_52 \
-	cuda5:sm_89
+	cuda1.cims.nyu.edu:sm_35 \
+	cuda2.cims.nyu.edu:sm_75 \
+	cuda3.cims.nyu.edu:sm_70 \
+	cuda4.cims.nyu.edu:sm_52 \
+	cuda5.cims.nyu.edu:sm_89
 
 # Default target
 all: detect-gpu $(TARGET)
@@ -63,20 +63,20 @@ cuda/%.o: cuda/%.cu
 	$(NVCC) $(NVCC_FLAGS) $(INCLUDES) -c $< -o $@
 
 # Individual GPU targets
-cuda1: NVCC_FLAGS += -arch=sm_35
-cuda1: $(TARGET)
+cuda1.cims.nyu.edu: NVCC_FLAGS += -arch=compute_35 -code=sm_35
+cuda1.cims.nyu.edu: $(TARGET)
 
-cuda2: NVCC_FLAGS += -arch=sm_75
-cuda2: $(TARGET)
+cuda2.cims.nyu.edu: NVCC_FLAGS += -arch=compute_75 -code=sm_75
+cuda2.cims.nyu.edu: $(TARGET)
 
-cuda3: NVCC_FLAGS += -arch=sm_70
-cuda3: $(TARGET)
+cuda3.cims.nyu.edu: NVCC_FLAGS += -arch=compute_70 -code=sm_70
+cuda3.cims.nyu.edu: $(TARGET)
 
-cuda4: NVCC_FLAGS += -arch=sm_52
-cuda4: $(TARGET)
+cuda4.cims.nyu.edu: NVCC_FLAGS += -arch=compute_52 -code=sm_52
+cuda4.cims.nyu.edu: $(TARGET)
 
-cuda5: NVCC_FLAGS += -arch=sm_89
-cuda5: $(TARGET)
+cuda5.cims.nyu.edu: NVCC_FLAGS += -arch=compute_89 -code=sm_89
+cuda5.cims.nyu.edu: $(TARGET)
 
 # Debug build
 debug: NVCC_FLAGS += -g -G
@@ -111,4 +111,4 @@ profile-ncu: $(TARGET)
 		echo "Nsight Compute not available"; \
 	fi
 
-.PHONY: all clean run profile-nsys profile-ncu detect-gpu cuda1 cuda2 cuda3 cuda4 cuda5 batch-run
+.PHONY: all clean run profile-nsys profile-ncu detect-gpu cuda1.cims.nyu.edu cuda2 cuda3 cuda4 cuda5 batch-run
