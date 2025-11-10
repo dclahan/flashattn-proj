@@ -1,2 +1,3 @@
 *.zip
 makefile.txt
+benchmark_full.cu

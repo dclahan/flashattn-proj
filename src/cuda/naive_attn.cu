@@ -22,9 +22,9 @@ const int d = 1024;
 // ****************************
 __global__ void matrix_transpose(const float*, float* , int, int);
 __global__ void matrix_multiply(const float*, const float*, float*, int, int, int);
-__global__ void array_divide(float*, float, int)
-__global__ void matrix_softmax(float*, int, int)
-void naive_attention(const float*, const float*, const float*, float*, int, int, int)
+__global__ void array_divide(float*, float, int);
+__global__ void matrix_softmax(float*, int, int);
+void naive_attention(const float*, const float*, const float*, float*, int, int, int);
 
 // ****************************
 // DRIVER FUNCTION

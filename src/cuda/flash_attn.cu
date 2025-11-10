@@ -7,21 +7,6 @@
 
 // implement scaled dot product attention (softmax(Q @ K^T * softmax_scale) @ V)
 
-// const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-'''
-    cudaDeviceProp prop;
-    cudaGetDeviceProperties(&prop, 0);
-    // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
-    const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-    const int Br = std::min(Bc,d);
-'''
-
-// __global__ void flash_attn_forward_kernel(
-//     const float *, const float *, const float *, 
-//     const int, const int, const int, 
-//     const int, const int, const int, 
-//     const float, float*, float*, float*);
-
 
 __global__ void flash_attn_forward_kernel( 
     const float *Q,
