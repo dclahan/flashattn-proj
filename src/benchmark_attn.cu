@@ -54,7 +54,7 @@ bool validate_results(float* result1, float* result2, int size, float tolerance 
     return true;
 }
 
-int benchmark_attention() {
+int benchmark_attention(bool kernel2, bool dynamicb) {
     std::cout << "=== Attention Mechanism Benchmark ===" << std::endl;
     std::cout << "Configuration: B=" << B << ", nh=" << nh << ", N=" << N << ", d=" << d << std::endl;
     std::cout << "Total Q size: " << (B * nh * N * d * sizeof(float)) / (1024.0 * 1024.0) << " MB" << std::endl;
@@ -90,7 +90,7 @@ int benchmark_attention() {
     std::cout << "Warming up..." << std::endl;
     for (int i = 0; i < 3; ++i) {
         naive_attention(d_Q, d_K, d_V, d_O_naive, B * nh * N, B * nh * N, d);
-        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
+        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d, kernel2, dynamicb);
         if (i == 0) cudaFree(flash_result);  // Free after first warm-up
     }
     cudaDeviceSynchronize();
@@ -131,7 +131,7 @@ int benchmark_attention() {
         cudaEventCreate(&stop);
         
         cudaEventRecord(start);
-        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
+        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d, kernel2, dynamicb);
         cudaEventRecord(stop);
         cudaEventSynchronize(stop);
         
@@ -214,8 +214,17 @@ int main(int argc, char* argv[]) {
     std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
 
     print_gpu_info();
-    
-    benchmark_attention();
+
+    bool kernel2 = false;
+    bool dynamicb = false;
+
+    if (argc == 1) {
+        benchmark_attention(kernel2, dynamicb);
+    } else {
+        kernel2 = (bool)atoi(argv[1]);
+        dynamicb = (bool)atoi(argv[2]);
+        benchmark_attention(kernel2, dynamicb);
+    }
 
     return 0;
 }

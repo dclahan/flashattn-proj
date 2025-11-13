@@ -220,20 +220,22 @@ void flash_attention_2_forward_kernel(
 
 float* flash_forward(
         float* Q, float* K, float* V, 
-        int B, int nh, int N, int d
+        int B, int nh, int N, int d, bool kernel2, bool dynamicb
     ) {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
     // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
-#ifdef DYNAMICB
-    const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-    const int Br = min(Bc,d);
-    printf("Using Dynamic Bc = %d, Br= %d\n", Bc, Br);
-#else
-    printf("Using Bc = Br = 32\n");
-    const int Bc = 32;
-    const int Br = 32;
-#endif
+    const int Bc;
+    const int Br;
+    if (dynamicb) {
+        Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
+        Br = min(Bc,d);
+        printf("Using Dynamic Bc = %d, Br= %d\n", Bc, Br);
+    } else {
+        printf("Using Bc = Br = 32\n");
+        Bc = 32;
+        Br = 32;
+    }
 
     const int Tc = ceil((float)N / Bc); 
     const int Tr = ceil((float)N / Br);
@@ -275,18 +277,20 @@ float* flash_forward(
     dim3 block_dim(Bc);    // Bc threads per block
 
     // Launch kernel
-#ifdef KERNEL2
-    printf("Launching Kernel 2");
-    flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
-        Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
-    );
-    #else
-    printf("Launching Forward Kernel");
-    flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
-        Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
-    );
-#endif
+    if (kernel2){
+        printf("Launching Kernel 2\n");
+        flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
+            Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
+        );
+    } else {
+        printf("Launching Forward Kernel\n");
+        flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
+            Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
+        );
+    }
     
+    // Synchronize to make sure kernel completes
+    cudaDeviceSynchronize();
     // Check for kernel launch errors
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
@@ -294,8 +298,6 @@ float* flash_forward(
         exit(-1);
     }
     
-    // Synchronize to make sure kernel completes
-    cudaDeviceSynchronize();
     
     cudaFree(l);
     cudaFree(m);
