@@ -6,7 +6,7 @@ SOURCES = $(MAIN_SOURCE) $(CUDA_SOURCES)
 all:
 	@echo "usage: make cudaX "
 	@echo "        1 <= X <= 5"
-	@echo "       make run (K2=K2 DB=DB)"
+	@echo "       make run (K2=0/1 DB=0/1)"
 	@echo "       run_nsight // only on compatable arch"
 
 use_tmp_dir:
