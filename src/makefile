@@ -3,7 +3,6 @@ MAIN_SOURCE = benchmark_attn.cu
 CUDA_SOURCES = cuda/flash_attn.cu cuda/naive_attn.cu
 SOURCES = $(MAIN_SOURCE) $(CUDA_SOURCES)
 
-
 all:
 	@echo "usage: make cudaX "
 	@echo "        1 <= X <= 5"

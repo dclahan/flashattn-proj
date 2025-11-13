@@ -45,6 +45,7 @@ __global__ void flash_attn_forward_kernel(
     S  = &sram[tile_size * 3];
 
     for (int j = 0; j < Tc; j++){
+        __syncthreads();
         // load Kj, Vj into sram
         for (x = 0; x < d; x++){
             Kj[(tx * d) + x] = K[qkv_offset + (tile_size * j) + (tx * d) + x];
@@ -97,21 +98,138 @@ __global__ void flash_attn_forward_kernel(
             m[lm_offset + (Br * i) + tx] = row_m_new;
             l[lm_offset + (Br * i) + tx] = row_l_new;
         }
-        __syncthreads(); 
     }
 }
+
+
+
+__global__
+void flash_attention_2_forward_kernel(
+    const float* Q,
+    const float* K,
+    const float* V,
+    const int N,
+    const int d,
+    const int Tc,
+    const int Tr,
+    const int Bc,
+    const int Br,
+    const float softmax_scale,
+    float* L,
+    float* O
+) {
+    int tx = threadIdx.x;
+    int bx = blockIdx.x; int by = blockIdx.y;  // batch and head index
+
+    // Offset into Q,K,V,O - different for each batch and head
+    int qkv_offset = (bx * gridDim.y * N * d) + (by * N * d);  // gridDim.y = nh
+    int lm_offset = (bx * gridDim.y * N) + (by * N);  // offset for L
+
+    // Define SRAM for Q,K,V,S
+    extern __shared__ float sram[];
+    int tile_size = Bc * d;  // size of Qi, Kj, Vj
+    float* Qi = sram;
+    float* Kj = &sram[tile_size];
+    float* Vj = &sram[tile_size * 2];
+    float* S = &sram[tile_size * 3];
+
+    for (int i = 0; i < Tr; ++i) {
+        if (i * Br + tx >= N)
+            break;  // break if we are done with the sequence
+
+        // Load Qi from HBM to SRAM, l and m to registers
+        for (int x = 0; x < d; x++) {
+            Qi[(tx * d) + x] = Q[qkv_offset + (tile_size * i) + (tx * d) + x];
+        }
+        float row_m_prev = -INFINITY;
+        float row_l_prev = 0;
+
+        // Causal mask: j <= i
+        for (int j = 0; j <= i; ++j) {
+            __syncthreads();
+            // Load Kj, Vj from HBM to SRAM
+            for (int x = 0; x < d; x++) {
+                Kj[(tx * d) + x] = K[qkv_offset + (tile_size * j) + (tx * d) + x];
+                Vj[(tx * d) + x] = V[qkv_offset + (tile_size * j) + (tx * d) + x];
+            }
+            __syncthreads();
+            // S_i^j = softmax_scale * QiKj^T
+            // S_i^j[tx][y] = softmax_scale * Sum_{x = 0}^{d-1} Qi[tx][x] * Kj[y][x]
+            float row_m = -INFINITY;
+            for (int y = 0; y < Bc; y++) {
+                if (j * Bc + y >= N)
+                    break;  // break if we are done with the sequence
+                if (i * Br + tx < j * Bc + y)
+                    break;
+                float sum = 0;
+                for (int x = 0; x < d; x++)
+                    sum += Qi[(tx * d) + x] * Kj[(y * d) + x];
+                sum *= softmax_scale;
+                S[(Bc * tx) + y] = sum;
+
+                if (sum > row_m)
+                    row_m = sum;
+            }
+
+            // m_i^j = max(m_i^j-1, row_max(S_i^j))
+            float new_row_m = max(row_m_prev, row_m);
+
+            // P_i^j = exp(S_i^j - m_i^j)
+            // P_i^j[tx][y] = exp(S_i^j[tx][y] - m_i^j)
+            float row_l = 0;
+            for (int y = 0; y < Bc; y++) {
+                if (j * Bc + y >= N)
+                    break;  // break if we are done with the sequence
+                if (i * Br + tx < j * Bc + y)
+                    break;
+                S[(Bc * tx) + y] = __expf(S[(Bc * tx) + y] - new_row_m);
+                row_l += S[(Bc * tx) + y];
+            }
+
+            // l_i^j = (exp(m_i^j-1 - m_i^j) * l_i^j-1) + row_sum(P_i^j)
+            float row_m_exp = __expf(row_m_prev - new_row_m);
+            float new_row_l = (row_m_exp * row_l_prev) + row_l;
+
+            // O_i^j = diag(exp(m_i^j-1 - m_i^j))^-1 * O_i^j-1 + P_i^jVj
+            for (int x = 0; x < d; x++) {
+                float pv = 0;  // Pij * Vj
+                for (int y = 0; y < Bc; y++) {
+                    if (j * Bc + y >= N)
+                        break;  // break if we are done with the sequence
+                    if (i * Br + tx < j * Bc + y)
+                        break;
+                    pv += S[(Bc * tx) + y] * Vj[(y * d) + x];
+                }
+                O[qkv_offset + (tile_size * i) + (tx * d) + x] = \
+                    row_m_exp * O[qkv_offset + (tile_size * i) + (tx * d) + x] + pv;
+            }
+
+            // Update m and l
+            row_m_prev = new_row_m;
+            row_l_prev = new_row_l;
+        }
+
+        // O_i = diag(l_i^{Tc})^-1 * O_i^{Tc}
+        for (int x = 0; x < d; x++)
+            O[qkv_offset + (tile_size * i) + (tx * d) + x] /= row_l_prev;
+        // L_i = m_i^{Tc} + log(l_i^{Tc})
+        L[lm_offset + (Br * i) + tx] = row_m_prev + __logf(row_l_prev);
+    }
+}
+
 
 float* flash_forward(
         float* Q, float* K, float* V, 
         int B, int nh, int N, int d
     ) {
-    // cudaDeviceProp prop;
-    // cudaGetDeviceProperties(&prop, 0);
-    // // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
-    // const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-    // const int Br = min(Bc,d);
-    const int Bc = 32;
-    const int Br = 32;
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
+// #IFNDEF DYNAMIC Br Bc
+    const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
+    const int Br = min(Bc,d);
+    // const int Bc = 32;
+    // const int Br = 32;
 
     const int Tc = ceil((float)N / Bc); 
     const int Tr = ceil((float)N / Br);
@@ -121,6 +239,8 @@ float* flash_forward(
     float *O, *l, *m;
     size_t Q_size = B * nh * N * d * sizeof(float);
     size_t l_m_size = B * nh * N * sizeof(float);
+
+    //TODO
     
     // Allocate GPU memory
     cudaMalloc(&O, Q_size);
@@ -130,7 +250,7 @@ float* flash_forward(
     // Initialize O to zeros, l to zeros, m to -INFINITY
     cudaMemset(O, 0, Q_size);
     cudaMemset(l, 0, l_m_size);
-    cudaMemset(m, 0, l_m_size); // We'll set to -INF later
+    cudaMemset(m, 0, l_m_size); // set to -INF later
     
     // Set m to -INFINITY using a simple kernel or cudaMemcpy
     float* m_host = new float[B * nh * N];
@@ -154,6 +274,10 @@ float* flash_forward(
     flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
     );
+    // #IFDEF flash2 or smth
+    // flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
+    //     Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
+    // );
     
     // Check for kernel launch errors
     cudaError_t err = cudaGetLastError();
