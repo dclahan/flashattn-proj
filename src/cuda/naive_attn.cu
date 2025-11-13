@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <math_constants.h>
+
 
 #include "naive_attn.h"
 
