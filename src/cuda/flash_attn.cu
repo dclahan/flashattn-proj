@@ -171,13 +171,11 @@ float* flash_forward(
     return O;
 }
 
-"""
-    TODO:
-        -> finish and refine flash attn
-            -> dynamic block sizes for different GPU sram specs (defined in paper)
-            -> get rid of thread-per-row simplification
-            -> speed up matmul (run on tensorcore?)
-            -> Q,K,V make float16 (can I ?)
-        -> backwards pass
-        -> plug into karpathy gpt model...?
-"""
+    // TODO:
+    //     -> finish and refine flash attn
+    //         -> dynamic block sizes for different GPU sram specs (defined in paper)
+    //         -> get rid of thread-per-row simplification
+    //         -> speed up matmul (run on tensorcore?)
+    //         -> Q,K,V make float16 (can I ?)
+    //     -> backwards pass
+    //     -> plug into karpathy gpt model...?
