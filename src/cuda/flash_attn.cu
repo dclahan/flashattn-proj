@@ -228,7 +228,9 @@ float* flash_forward(
 #ifdef DYNAMICB
     const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
     const int Br = min(Bc,d);
+    printf("Using Dynamic Bc = %d, Br= %d\n", Bc, Br)
 #else
+    printf("Using Bc = Br = 32\n")
     const int Bc = 32;
     const int Br = 32;
 #endif
@@ -274,10 +276,12 @@ float* flash_forward(
 
     // Launch kernel
 #ifdef KERNEL2
+    printf("Launching Kernel 2")
     flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
     );
-#else
+    #else
+    printf("Launching Forward Kernel")
     flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
     );
