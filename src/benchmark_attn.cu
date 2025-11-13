@@ -7,14 +7,15 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <math_constants.h>
 
 #include "cuda/flash_attn.h"
 #include "cuda/naive_attn.h"
 
-const int B = 1;  // batch size
-const int nh = 8; // number of heads
-const int N = 4096; // sequence length
-const int d = 1024; // head dimension
+const int B = 16;  // batch size
+const int nh = 12; // number of heads
+const int N = 64;  // sequence length
+const int d = 64;  // head dimension
 
 void print_gpu_info() {
     cudaDeviceProp prop;
@@ -44,8 +45,8 @@ void initialize_matrices(float* Q, float* K, float* V, int size_Q, int size_KV) 
 }
 
 bool validate_results(float* result1, float* result2, int size, float tolerance = 1e-4f) {
-    for (int i = 0; i < size; ++i) {
-        if (abs(result1[i] - result2[i]) > tolerance) {
+    for (int i = 0; i < size; i++) {
+        if (std::abs(result1[i] - result2[i]) > tolerance) {
             std::cout << "Mismatch at index " << i << ": " << result1[i] << " vs " << result2[i] << std::endl;
             return false;
         }
