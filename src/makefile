@@ -38,7 +38,7 @@ run_nsight:
 	ncu ./benchmark_attn
 
 clean:
-	rm -f ~/tmp_dir 
+	rm -rf ~/tmp_dir 
 
 # 	nvcc -arch=compute_75 -code=sm_75  ./benchmark_attn.cu ./cuda/flash_attn.cu ./cuda/naive_attn.cu -o benchmark_attn
 
