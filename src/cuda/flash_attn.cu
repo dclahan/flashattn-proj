@@ -225,11 +225,13 @@ float* flash_forward(
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
     // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
-// #IFNDEF DYNAMIC Br Bc
+#ifdef DYNAMICB
     const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
     const int Br = min(Bc,d);
-    // const int Bc = 32;
-    // const int Br = 32;
+#else
+    const int Bc = 32;
+    const int Br = 32;
+#endif
 
     const int Tc = ceil((float)N / Bc); 
     const int Tr = ceil((float)N / Br);
@@ -271,13 +273,15 @@ float* flash_forward(
     dim3 block_dim(Bc);    // Bc threads per block
 
     // Launch kernel
+#ifdef KERNEL2
+    flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
+        Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
+    );
+#else
     flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
     );
-    // #IFDEF flash2 or smth
-    // flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
-    //     Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
-    // );
+#endif
     
     // Check for kernel launch errors
     cudaError_t err = cudaGetLastError();
