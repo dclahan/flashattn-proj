@@ -34,7 +34,7 @@ __global__ void matrix_transpose(
     int col = blockIdx.y * blockDim.y + threadIdx.y;
     if (row >= N || col > M) return;
 
-    dst[col*N+row] = src[row*M + col];
+    dst[col * N + row] = src[row * M + col];
 }
 
 // naive matmul
@@ -47,7 +47,7 @@ __global__ void matrix_multiply(
 ) {
     int row = blockIdx.x * blockDim.x + threadIdx.x;
     int col = blockIdx.y * blockDim.y + threadIdx.y;
-    if (row >= N || col > M) return;
+    if (row >= N || col >= M) return;
     
     float sum = 0.0f;
     for (int i = 0; i < d; ++i) {

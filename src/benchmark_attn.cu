@@ -177,12 +177,13 @@ int benchmark_attention(bool dynamicb) {
     std::cout << "  Avg: " << flash_avg << " ms" << std::endl;
     
     std::cout << std::endl;
-    std::cout << "Speedup: " << std::setprecision(2) << (naive_avg / flash_avg) << "x" << std::endl;
+    std::cout << "Avg Speedup: " << std::setprecision(2) << (naive_avg / flash_avg) << "x" << std::endl;
 
     // Validate results
     std::cout << std::endl;
     std::cout << "=== VALIDATION ===" << std::endl;
-    if (validate_results(h_O_naive, h_O_flash, std::min(1000, (int)Q_size), 13e-2f)) {
+    float tolerance = 13e-4f;
+    if (validate_results(h_O_naive, h_O_flash, std::min(1000, (int)Q_size), tolerance)) {
         std::cout << "✓ Results match within tolerance" << std::endl;
     } else {
         std::cout << "✗ Results don't match!" << std::endl;
