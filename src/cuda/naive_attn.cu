@@ -108,6 +108,8 @@ int naive_attention(
     cudaMalloc(&scores, N * M * sizeof(float));
 
     printf("Starting Naive Attention\n");
+    printf("N = %d, M = %d, d = %d\n", N, M, d);
+
 
     dim3 blockDim1(32, 32);
     dim3 gridDim1(CEIL_DIV(M, blockDim1.x), CEIL_DIV(d, blockDim1.y));

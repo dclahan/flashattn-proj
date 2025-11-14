@@ -34,11 +34,10 @@ cuda5:
 	nvcc -o $(TARGET) $(SOURCES) -arch=compute_89 -code=sm_89
 
 run:
-	./benchmark_attn $(DB)
-
+	./$(TARGET) $(DB)
+ 
 run_nsight:
-	@export TMPDIR=~/tmp_dir
-	ncu ./benchmark_attn
+	nsys profile --stats=true ./$(TARGET) $(DB)
 
 clean:
 	rm -rf ~/tmp_dir $(TARGET)
