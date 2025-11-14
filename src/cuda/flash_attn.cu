@@ -118,8 +118,10 @@ float* flash_forward(
     float *O, *l, *m;
     size_t Q_size = B * nh * N * d * sizeof(float);
     size_t l_m_size = B * nh * N * sizeof(float);
-
-    //TODO
+    
+    printf("Bc = %d, Br = %d\n", Bc, Br);
+    printf("Tc = %d, Tr = %d, softmax_scale = %d\n", Tc, Tr, softmax_scale);
+    printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
     
     // Allocate GPU memory
     cudaMalloc(&O, Q_size);
@@ -143,11 +145,13 @@ float* flash_forward(
     const int sram_size = (4 * Bc * d * sizeof(float)); // + (Bc * Br * sizeof(float));
     int max_sram_size;
     cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
-    // printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
+    printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
 
     // Set up grid and block dimensions
     dim3 grid_dim(B, nh);  // batch_size x num_heads
     dim3 block_dim(Bc);    // Bc threads per block
+
+    printf("grid dim = %d x %d, block dim = %d", B, nh,Bc);
 
     // Launch kernel
     // printf("Launching Forward Kernel\n");
