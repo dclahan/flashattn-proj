@@ -107,7 +107,6 @@ float* flash_forward(
     ) {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
-    // const int Bc = std::ceil(prop.sharedMemPerBlock/4*d);
     int _Bc, _Br;
     if (dynamicb) {
         _Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
@@ -165,17 +164,6 @@ float* flash_forward(
     flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
     );
-    // if (kernel2){
-    //     printf("Launching Kernel 2\n");
-    //     flash_attention_2_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
-    //         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, O
-    //     );
-    // } else {
-    //     printf("Launching Forward Kernel\n");
-    //     flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
-    //         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
-    //     );
-    // }
     
     // Synchronize to make sure kernel completes
     cudaDeviceSynchronize();
