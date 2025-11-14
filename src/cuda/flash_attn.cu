@@ -120,9 +120,9 @@ float* flash_forward(
     size_t l_m_size = B * nh * N * sizeof(float);
     
     printf("Bc = %d, Br = %d\n", Bc, Br);
-    printf("Tc = %d, Tr = %d, softmax_scale = %d\n", Tc, Tr, softmax_scale);
+    printf("Tc = %d, Tr = %d, softmax_scale = %f\n", Tc, Tr, softmax_scale);
     printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
-    
+
     // Allocate GPU memory
     cudaMalloc(&O, Q_size);
     cudaMalloc(&l, l_m_size);
@@ -151,7 +151,7 @@ float* flash_forward(
     dim3 grid_dim(B, nh);  // batch_size x num_heads
     dim3 block_dim(Bc);    // Bc threads per block
 
-    printf("grid dim = %d x %d, block dim = %d", B, nh,Bc);
+    printf("grid dim = %d x %d, block dim = %d\n", B, nh,Bc);
 
     // Launch kernel
     // printf("Launching Forward Kernel\n");
