@@ -140,7 +140,7 @@ float* flash_forward(
     delete[] m_host;
 
     // Calculate SRAM size needed per block
-    const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
+    const int sram_size = (4 * Bc * d * sizeof(float)); // + (Bc * Br * sizeof(float));
     int max_sram_size;
     cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
     // printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
