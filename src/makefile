@@ -6,7 +6,12 @@ SOURCES = $(MAIN_SOURCE) $(CUDA_SOURCES)
 all:
 	@echo "usage: make cudaX "
 	@echo "         1 <= X <= 5"
-	@echo "       make run (DB=0/1)"
+	@echo "       make run (B=B nh=nh N=N d=d)"
+	@echo "           B  = batch size"
+	@echo "           nh = number of heads"
+	@echo "           N  = sequence length"
+	@echo "           d  = head dimension"
+	@echo "       run_nsys profile"
 	@echo "       run_nsight // only on compatable arch"
 
 use_tmp_dir:
@@ -34,11 +39,16 @@ cuda5:
 	nvcc -o $(TARGET) $(SOURCES) -arch=compute_89 -code=sm_89
 
 run:
-	./$(TARGET) $(DB)
+	./$(TARGET) $(B) $(nh) $(N) $(d)
  
+run_nsys:
+	nsys profile --stats=true ./$(TARGET)
+
 run_nsight:
-	nsys profile --stats=true ./$(TARGET) $(DB)
+	ncu --kernel-id ::flash_attn_forward_kernel:4 ./$(TARGET)
 
 clean:
 	rm -rf ~/tmp_dir $(TARGET)
 
+clean-all:
+	rm -rf ~/tmp_dir $(TARGET) *.sqlite *.nsys-rep

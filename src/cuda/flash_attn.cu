@@ -103,22 +103,22 @@ __global__ void flash_attn_forward_kernel(
 
 float* flash_forward(
         float* Q, float* K, float* V, 
-        int B, int nh, int N, int d, bool dynamicb
+        int B, int nh, int N, int d
     ) {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
-    int _Bc, _Br;
-    if (dynamicb) {
-        _Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-        _Br = min(_Bc,d);
-        printf("Using Dynamic Bc = %d, Br= %d\n", _Bc, _Br);
-    } else {
-        printf("Using Bc = Br = 32\n");
-        _Bc = 32;
-        _Br = 32;
-    }
-    const int Bc = _Bc;
-    const int Br = _Br;
+    // int _Bc, _Br;
+    // if (dynamicb) {
+    //     _Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
+    //     _Br = min(_Bc,d);
+    //     printf("Using Dynamic Bc = %d, Br= %d\n", _Bc, _Br);
+    // } else {
+    //     printf("Using Bc = Br = 32\n");
+    //     _Bc = 32;
+    //     _Br = 32;
+    // }
+    const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
+    const int Br = min(Bc,d);
 
     const int Tc = ceil((float)N / Bc); 
     const int Tr = ceil((float)N / Br);

@@ -12,10 +12,10 @@
 #include "cuda/flash_attn.h"
 #include "cuda/naive_attn.h"
 
-const int B = 16;  // batch size
-const int nh = 12; // number of heads
-const int N = 64;  // sequence length
-const int d = 64;  // head dimension
+// const int B = 16;  // batch size
+// const int nh = 12; // number of heads
+// const int N = 64;  // sequence length
+// const int d = 64;  // head dimension
 
 void print_gpu_info() {
     cudaDeviceProp prop;
@@ -55,7 +55,7 @@ bool validate_results(float* result1, float* result2, int size, float tolerance 
     return true;
 }
 
-int benchmark_attention(bool dynamicb) {
+int benchmark_attention(int B, int nh, int N, int d) {
     std::cout << "=== Attention Mechanism Benchmark ===" << std::endl;
     std::cout << "Configuration: B=" << B << ", nh=" << nh << ", N=" << N << ", d=" << d << std::endl;
     std::cout << "Total Q size: " << (B * nh * N * d * sizeof(float)) / (1024.0 * 1024.0) << " MB" << std::endl;
@@ -207,8 +207,8 @@ int benchmark_attention(bool dynamicb) {
     // std::cout << "  nsys profile --stats=true ./benchmark_attention" << std::endl;
     // std::cout << std::endl;
     // std::cout << "To profile with Nsight Compute:" << std::endl;
-    // std::cout << "  nv-nsight-cu-cli --kernel-id ::flash_attn_forward_kernel:1 ./benchmark_attention" << std::endl;
-    // std::cout << "  nv-nsight-cu-cli --kernel-id ::matrix_multiply:1 ./benchmark_attention" << std::endl;
+    // std::cout << "  ncu --kernel-id ::flash_attn_forward_kernel:1 ./benchmark_attn" << std::endl;
+    // std::cout << "  ncu --kernel-id ::matrix_multiply:1 ./benchmark_attn" << std::endl;
     return 0;
 }
 
@@ -217,13 +217,19 @@ int main(int argc, char* argv[]) {
 
     print_gpu_info();
 
-    bool dynamicb = false;
+    int B = 16;  // batch size
+    int nh = 12; // number of heads
+    int N = 64;  // sequence length
+    int d = 64;  // head dimension
 
     if (argc == 1) {
-        benchmark_attention(dynamicb);
+        benchmark_attention(B, nh, N, d);
     } else {
-        dynamicb = (bool)atoi(argv[1]);
-        benchmark_attention(dynamicb);
+        B = (int)atoi(argv[1]);
+        nh = (int)atoi(argv[2]);
+        N = (int)atoi(argv[3]);
+        d = (int)atoi(argv[4]);
+        benchmark_attention(B, nh, N, d);
     }
 
     return 0;
