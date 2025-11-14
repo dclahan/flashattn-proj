@@ -5,8 +5,8 @@ SOURCES = $(MAIN_SOURCE) $(CUDA_SOURCES)
 
 all:
 	@echo "usage: make cudaX "
-	@echo "        1 <= X <= 5"
-	@echo "       make run (K2=0/1 DB=0/1)"
+	@echo "         1 <= X <= 5"
+	@echo "       make run (DB=0/1)"
 	@echo "       run_nsight // only on compatable arch"
 
 use_tmp_dir:
@@ -15,7 +15,7 @@ use_tmp_dir:
 
 cuda1:
 	@make use_tmp_dir
-	nvcc -o $(TARGET) $(SOURCES) -arch=compute_35 -code=sm_35
+	nvcc -o $(TARGET) $(SOURCES)
 
 cuda2:
 	@make use_tmp_dir
@@ -34,7 +34,7 @@ cuda5:
 	nvcc -o $(TARGET) $(SOURCES) -arch=compute_89 -code=sm_89
 
 run:
-	./benchmark_attn $(K2) $(DB)
+	./benchmark_attn $(DB)
 
 run_nsight:
 	ncu ./benchmark_attn
