@@ -68,7 +68,7 @@ __global__ void flash_attn_forward_kernel(
                     sum += Qi[(tx * d) + x] * Kj[(y * d) + x];
                 sum *= softmax_scale;
                 S[(Bc * tx) + y] = sum;
-                if (sum > row_m) row_m = sum; // pain point?
+                if (sum > row_m) row_m = sum;
             }
 
             // 12. compute
@@ -77,7 +77,7 @@ __global__ void flash_attn_forward_kernel(
             row_l = 0;
             for (y = 0; y < Bc; y++) {
                 S[(Bc * tx) + y] = __expf(S[(Bc * tx) + y] - row_m);
-                row_l += S[(Bc * tx) + y]; // sram access for above calc... store intermed val in register ?
+                row_l += S[(Bc * tx) + y];
             }
 
             // 13. compute mi_new, li_new

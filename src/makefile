@@ -37,6 +37,7 @@ run:
 	./benchmark_attn $(DB)
 
 run_nsight:
+	@export TMPDIR=~/tmp_dir
 	ncu ./benchmark_attn
 
 clean:

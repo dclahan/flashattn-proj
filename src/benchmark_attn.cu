@@ -184,9 +184,9 @@ int benchmark_attention(bool dynamicb) {
     std::cout << "=== VALIDATION ===" << std::endl;
     float tolerance = 13e-2f;
     if (validate_results(h_O_naive, h_O_flash, std::min(1000, (int)Q_size), tolerance)) {
-        std::cout << "✓ Results match within tolerance" << std::endl;
+        std::cout << "Results match within tolerance" << std::endl;
     } else {
-        std::cout << "✗ Results don't match!" << std::endl;
+        std::cout << "Results don't match!" << std::endl;
     }
 
     // Cleanup
