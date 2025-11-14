@@ -28,42 +28,42 @@ int naive_attention(const float*, const float*, const float*, float*, int, int, 
 __global__ void matrix_transpose(
     const float* src,
     float* dst,
-    int N, int M
+    int Nna, int Mna
 ) {
     int row = blockIdx.x * blockDim.x + threadIdx.x;
     int col = blockIdx.y * blockDim.y + threadIdx.y;
-    if (row >= N || col > M) return;
+    if (row >= Nna || col > Mna) return;
 
-    dst[col * N + row] = src[row * M + col];
+    dst[col * Nna + row] = src[row * Mna + col];
 }
 
 // naive matmul
-// TODO: change to Cuda optimized "hello world" cuMatMul
+// TODO: There is out of bounds error occurring, need to fix! and then test
 __global__ void matrix_multiply(
     const float* A,
     const float* B,
     float* C,
-    int N, int M, int d
+    int rowsA, int colsB, int common
 ) {
     int row = blockIdx.x * blockDim.x + threadIdx.x;
     int col = blockIdx.y * blockDim.y + threadIdx.y;
-    if (row >= N || col >= M) return;
+    if (row >= rowsA || col >= colsB) return;
     
     float sum = 0.0f;
-    for (int i = 0; i < d; ++i) {
-        sum += A[row * d + i] * B[i * M + col];
+    for (int i = 0; i < common; ++i) {
+        sum += A[row * common + i] * B[i * colsB + col];
     }
-    C[row * M + col] = sum;
+    C[row * colsB + col] = sum;
 }
 
 // divide elems of array by value in place
 __global__ void array_divide(
     float* array,
     float value,
-    int N
+    int Nna
 ) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx < N) {
+    if (idx < Nna) {
         array[idx] /= value;
     }
 }
@@ -71,27 +71,27 @@ __global__ void array_divide(
 // compute safe softmax
 __global__ void matrix_softmax(
     float* matrix,
-    int N, int M
+    int Nna, int Mna
 ) {
     int row = blockIdx.x * blockDim.x + threadIdx.x;
-    if (row >= N) return;
+    if (row >= Nna) return;
 
-    // find m
+    // find Mna
     float max = -CUDART_INF_F;
-    for (int col = 0; col < M; ++col) {
-        max = fmaxf(max, matrix[row * M + col]);
+    for (int col = 0; col < Mna; ++col) {
+        max = fmaxf(max, matrix[row * Mna + col]);
     }
 
     float sum_exp = 0.0f;
-    for (int col = 0; col < M; ++col) {
-        int idx = row * M + col;
-        // subtract m for numerical stability
+    for (int col = 0; col < Mna; ++col) {
+        int idx = row * Mna + col;
+        // subtract Mna for numerical stability
         matrix[idx] = expf(matrix[idx] - max);
         sum_exp += matrix[idx];
     }
 
-    for (int col = 0; col < M; ++col) {
-        matrix[row * M + col] /= sum_exp;
+    for (int col = 0; col < Mna; ++col) {
+        matrix[row * Mna + col] /= sum_exp;
     }
 }
 
@@ -101,19 +101,26 @@ int naive_attention(
     const float* K,
     const float* V,
     float* O,
-    int N, int M, int d
+    int Nna, int Mna, int d
 ) {
     float *K_T, *scores;
-    cudaMalloc(&K_T, d * M * sizeof(float));
-    cudaMalloc(&scores, N * M * sizeof(float));
+    cudaMalloc(&K_T, d * Mna * sizeof(float));
+    cudaMalloc(&scores, Nna * Mna * sizeof(float));
 
     printf("Starting Naive Attention\n");
-    // printf("N = %d, M = %d, d = %d\n", N, M, d);
+    printf("Nna = %d, Mna = %d, d = %d\n", Nna, Mna, d);
 
 
     dim3 blockDim1(32, 32);
-    dim3 gridDim1(CEIL_DIV(M, blockDim1.x), CEIL_DIV(d, blockDim1.y));
-    matrix_transpose<<<gridDim1, blockDim1>>>(K, K_T, M, d);
+    dim3 gridDim1(CEIL_DIV(Mna, blockDim1.x), CEIL_DIV(d, blockDim1.y));
+    matrix_transpose<<<gridDim1, blockDim1>>>(K, K_T, Mna, d);
+    cudaDeviceSynchronize();
+
+
+    printf("matmul 1\n");
+    dim3 blockDim2(32, 32);
+    dim3 gridDim2(CEIL_DIV(Mna, blockDim2.x), CEIL_DIV(Nna, blockDim2.y));
+    matrix_multiply<<<gridDim2, blockDim2>>>(Q, K_T, scores, Nna, Mna, d);
     cudaDeviceSynchronize();
     // Check for kernel launch errors
     cudaError_t err = cudaGetLastError();
@@ -122,42 +129,22 @@ int naive_attention(
         exit(-1);
     }
 
-    dim3 blockDim2(32, 32);
-    dim3 gridDim2(CEIL_DIV(N, blockDim2.x), CEIL_DIV(M, blockDim2.y));
-    matrix_multiply<<<gridDim2, blockDim2>>>(Q, K_T, scores, N, M, d);
-    cudaDeviceSynchronize();
-    // Check for kernel launch errors
-    err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
-
     dim3 blockDim3(1024);
-    dim3 gridDim3(CEIL_DIV(N * M, blockDim3.x));
-    array_divide<<<gridDim3, blockDim3>>>(scores, sqrtf((float)d), N * M);
+    dim3 gridDim3(CEIL_DIV(Nna * Mna, blockDim3.x));
+    array_divide<<<gridDim3, blockDim3>>>(scores, sqrtf((float)d), Nna * Mna);
     cudaDeviceSynchronize();
-    // Check for kernel launch errors
-    err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
+
 
     dim3 blockDim4(1024);
-    dim3 gridDim4(CEIL_DIV(N, blockDim4.x));
-    matrix_softmax<<<gridDim4, blockDim4>>>(scores, N, M);
+    dim3 gridDim4(CEIL_DIV(Nna, blockDim4.x));
+    matrix_softmax<<<gridDim4, blockDim4>>>(scores, Nna, Mna);
     cudaDeviceSynchronize();
-    // Check for kernel launch errors
-    err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
 
+
+    printf("matmul 2\n");
     dim3 blockDim5(32, 32);
-    dim3 gridDim5(CEIL_DIV(N, blockDim5.x), CEIL_DIV(d, blockDim5.y));
-    matrix_multiply<<<gridDim5, blockDim5>>>(scores, V, O, N, d, M);
+    dim3 gridDim5(CEIL_DIV(d, blockDim5.x), CEIL_DIV(Nna, blockDim5.y));
+    matrix_multiply<<<gridDim5, blockDim5>>>(scores, V, O, Nna, d, Mna);
     cudaDeviceSynchronize();
     // Check for kernel launch errors
     err = cudaGetLastError();
