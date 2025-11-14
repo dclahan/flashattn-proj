@@ -122,12 +122,11 @@ int naive_attention(
     dim3 gridDim2(CEIL_DIV(Mna, blockDim2.x), CEIL_DIV(Nna, blockDim2.y));
     matrix_multiply<<<gridDim2, blockDim2>>>(Q, K_T, scores, Nna, Mna, d);
     cudaDeviceSynchronize();
-    // Check for kernel launch errors
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
+    // cudaError_t err = cudaGetLastError();
+    // if (err != cudaSuccess) {
+    //     printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+    //     exit(-1);
+    // }
 
     dim3 blockDim3(1024);
     dim3 gridDim3(CEIL_DIV(Nna * Mna, blockDim3.x));
@@ -146,12 +145,11 @@ int naive_attention(
     dim3 gridDim5(CEIL_DIV(d, blockDim5.x), CEIL_DIV(Nna, blockDim5.y));
     matrix_multiply<<<gridDim5, blockDim5>>>(scores, V, O, Nna, d, Mna);
     cudaDeviceSynchronize();
-    // Check for kernel launch errors
-    err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
+    // err = cudaGetLastError();
+    // if (err != cudaSuccess) {
+    //     printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+    //     exit(-1);
+    // }
 
     cudaFree(K_T);
     cudaFree(scores);

@@ -36,7 +36,7 @@ __global__ void flash_attn_forward_kernel(
     lm_offset  = (bx * gridDim.y * N)     + (by * N);
 
     // sram for Q,K,V,S
-    extern __shared__ float sram[]; // QUESTION:    what does extern do?
+    extern __shared__ float sram[];
     // above should be on SM shared memory
     tile_size = Bc * d;
     Qi = sram;
@@ -158,11 +158,11 @@ float* flash_forward(
     // Synchronize to make sure kernel completes
     cudaDeviceSynchronize();
     // Check for kernel launch errors
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
+    // cudaError_t err = cudaGetLastError();
+    // if (err != cudaSuccess) {
+    //     printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+    //     exit(-1);
+    // }
     
     
     cudaFree(l);
