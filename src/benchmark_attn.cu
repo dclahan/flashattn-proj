@@ -91,7 +91,7 @@ int benchmark_attention(int B, int nh, int N, int d) {
     std::cout << "Warming up..." << std::endl;
     for (int i = 0; i < 3; ++i) {
         naive_attention(d_Q, d_K, d_V, d_O_naive, B * nh * N, B * nh * N, d);
-        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d, dynamicb);
+        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
         if (i == 0) cudaFree(flash_result);  // Free after first warm-up
     }
     cudaDeviceSynchronize();
@@ -132,7 +132,7 @@ int benchmark_attention(int B, int nh, int N, int d) {
         cudaEventCreate(&stop);
         
         cudaEventRecord(start);
-        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d, dynamicb);
+        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
         cudaEventRecord(stop);
         cudaEventSynchronize(stop);
         
