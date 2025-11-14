@@ -115,26 +115,56 @@ int naive_attention(
     dim3 gridDim1(CEIL_DIV(M, blockDim1.x), CEIL_DIV(d, blockDim1.y));
     matrix_transpose<<<gridDim1, blockDim1>>>(K, K_T, M, d);
     cudaDeviceSynchronize();
+    // Check for kernel launch errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
 
     dim3 blockDim2(32, 32);
     dim3 gridDim2(CEIL_DIV(N, blockDim2.x), CEIL_DIV(M, blockDim2.y));
     matrix_multiply<<<gridDim2, blockDim2>>>(Q, K_T, scores, N, M, d);
     cudaDeviceSynchronize();
+    // Check for kernel launch errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
 
     dim3 blockDim3(1024);
     dim3 gridDim3(CEIL_DIV(N * M, blockDim3.x));
     array_divide<<<gridDim3, blockDim3>>>(scores, sqrtf((float)d), N * M);
     cudaDeviceSynchronize();
+    // Check for kernel launch errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
 
     dim3 blockDim4(1024);
     dim3 gridDim4(CEIL_DIV(N, blockDim4.x));
     matrix_softmax<<<gridDim4, blockDim4>>>(scores, N, M);
     cudaDeviceSynchronize();
+    // Check for kernel launch errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
 
     dim3 blockDim5(32, 32);
     dim3 gridDim5(CEIL_DIV(N, blockDim5.x), CEIL_DIV(d, blockDim5.y));
     matrix_multiply<<<gridDim5, blockDim5>>>(scores, V, O, N, d, M);
     cudaDeviceSynchronize();
+    // Check for kernel launch errors
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
 
     cudaFree(K_T);
     cudaFree(scores);

@@ -107,16 +107,6 @@ float* flash_forward(
     ) {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
-    // int _Bc, _Br;
-    // if (dynamicb) {
-    //     _Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-    //     _Br = min(_Bc,d);
-    //     printf("Using Dynamic Bc = %d, Br= %d\n", _Bc, _Br);
-    // } else {
-    //     printf("Using Bc = Br = 32\n");
-    //     _Bc = 32;
-    //     _Br = 32;
-    // }
     const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
     const int Br = min(Bc,d);
 
