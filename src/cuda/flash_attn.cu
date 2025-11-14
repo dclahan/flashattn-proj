@@ -143,14 +143,14 @@ float* flash_forward(
     const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
     int max_sram_size;
     cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
-    printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
+    // printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
 
     // Set up grid and block dimensions
     dim3 grid_dim(B, nh);  // batch_size x num_heads
     dim3 block_dim(Bc);    // Bc threads per block
 
     // Launch kernel
-    printf("Launching Forward Kernel\n");
+    // printf("Launching Forward Kernel\n");
     flash_attn_forward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q, K, V, N, d, Tc, Tr, Bc, Br, softmax_scale, l, m, O
     );

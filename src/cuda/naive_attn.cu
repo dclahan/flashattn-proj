@@ -107,8 +107,8 @@ int naive_attention(
     cudaMalloc(&K_T, d * Mna * sizeof(float));
     cudaMalloc(&scores, Nna * Mna * sizeof(float));
 
-    printf("Starting Naive Attention\n");
-    printf("Nna = %d, Mna = %d, d = %d\n", Nna, Mna, d);
+    // printf("Starting Naive Attention\n");
+    // printf("Nna = %d, Mna = %d, d = %d\n", Nna, Mna, d);
 
 
     dim3 blockDim1(32, 32);
@@ -117,7 +117,7 @@ int naive_attention(
     cudaDeviceSynchronize();
 
 
-    printf("matmul 1\n");
+    // printf("matmul 1\n");
     dim3 blockDim2(32, 32);
     dim3 gridDim2(CEIL_DIV(Mna, blockDim2.x), CEIL_DIV(Nna, blockDim2.y));
     matrix_multiply<<<gridDim2, blockDim2>>>(Q, K_T, scores, Nna, Mna, d);
@@ -140,7 +140,7 @@ int naive_attention(
     cudaDeviceSynchronize();
 
 
-    printf("matmul 2\n");
+    // printf("matmul 2\n");
     dim3 blockDim5(32, 32);
     dim3 gridDim5(CEIL_DIV(d, blockDim5.x), CEIL_DIV(Nna, blockDim5.y));
     matrix_multiply<<<gridDim5, blockDim5>>>(scores, V, O, Nna, d, Mna);
