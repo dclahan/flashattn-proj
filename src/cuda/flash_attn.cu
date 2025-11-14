@@ -158,11 +158,11 @@ float* flash_forward(
     // Synchronize to make sure kernel completes
     cudaDeviceSynchronize();
     // Check for kernel launch errors
-    // cudaError_t err = cudaGetLastError();
-    // if (err != cudaSuccess) {
-    //     printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-    //     exit(-1);
-    // }
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+        exit(-1);
+    }
     
     
     cudaFree(l);
