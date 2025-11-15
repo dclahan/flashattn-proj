@@ -229,12 +229,7 @@ int main(int argc, char* argv[]) {
         for (int j = 0; j < 4; j++){
             for (int k = 0; k < 3; k++){
                 for (int l = 0; l < 3; l++){
-                    try {
-                        benchmark_attention(B[i], nh[j], N[k], d[l]);
-                    } catch {
-                        std::cout << "error!" << std::endl;
-                        continue;
-                    }
+                    benchmark_attention(B[i], nh[j], N[k], d[l]);
                 }
             }
         }
