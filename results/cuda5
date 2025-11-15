@@ -1,0 +1,28 @@
+B = 4,8,12,16
+nh= 4,8,12,16
+N = 64,128,256
+d = 32,64,128
+
+
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=256, d=64
+Total Q size: 6 MB
+
+Warming up...
+Benchmarking Naive Attention...
+Benchmarking Flash Attention...
+
+=== RESULTS ===
+Naive Attention:
+  Min: 695.662 ms
+  Max: 697.210 ms
+  Avg: 696.255 ms
+Flash Attention:
+  Min: 18.996 ms
+  Max: 23.871 ms
+  Avg: 20.493 ms
+
+Avg Speedup: 33.98x
+
+
+
