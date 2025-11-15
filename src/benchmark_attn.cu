@@ -225,15 +225,8 @@ int main(int argc, char* argv[]) {
     const int N[]  = {64,128,256};
     const int d[]  = {32,64,128};
 
-    for (int i = 0; i < 4; i++){
-        for (int j = 0; j < 4; j++){
-            for (int k = 0; k < 3; k++){
-                for (int l = 0; l < 3; l++){
-                    benchmark_attention(B[i], nh[j], N[k], d[l]);
-                }
-            }
-        }
-    }
+    benchmark_attention(B[0], nh[0], N[0], d[0]);
+
     
     
     
