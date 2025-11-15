@@ -102,6 +102,7 @@ int benchmark_attention(int B, int nh, int N, int d) {
     std::vector<float> naive_times;
     
     for (int i = 0; i < num_runs; ++i) {
+        std::cout << ".";
         cudaEvent_t start, stop;
         cudaEventCreate(&start);
         cudaEventCreate(&stop);
@@ -123,10 +124,11 @@ int benchmark_attention(int B, int nh, int N, int d) {
     cudaMemcpy(h_O_naive, d_O_naive, Q_size * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Benchmark Flash Attention
-    std::cout << "Benchmarking Flash Attention..." << std::endl;
+    std::cout << "\nBenchmarking Flash Attention..." << std::endl;
     std::vector<float> flash_times;
     
     for (int i = 0; i < num_runs; ++i) {
+        std::cout << ".";
         cudaEvent_t start, stop;
         cudaEventCreate(&start);
         cudaEventCreate(&stop);
@@ -164,6 +166,7 @@ int benchmark_attention(int B, int nh, int N, int d) {
     auto [flash_min, flash_max, flash_avg] = calculate_stats(flash_times);
 
     // Print results
+    std::cout << std::endl;
     std::cout << std::endl;
     std::cout << "=== RESULTS ===" << std::endl;
     std::cout << "Naive Attention:" << std::endl;
@@ -217,20 +220,42 @@ int main(int argc, char* argv[]) {
 
     print_gpu_info();
 
-    int B = 16;  // batch size
-    int nh = 12; // number of heads
-    int N = 64;  // sequence length
-    int d = 64;  // head dimension
+    int B[]  = {4,8,12,16}
+    int nh[] = {4,8,12,16}
+    int N[]  = {64,128,256}
+    int d[]  = {32,64,128}
 
-    if (argc == 1) {
-        benchmark_attention(B, nh, N, d);
-    } else {
-        B = (int)atoi(argv[1]);
-        nh = (int)atoi(argv[2]);
-        N = (int)atoi(argv[3]);
-        d = (int)atoi(argv[4]);
-        benchmark_attention(B, nh, N, d);
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++){
+            for (int k = 0; k < 3; k++){
+                for (int l = 0; l < 3; l++){
+                    try
+                        benchmark_attention(B[i], nh[j], N[k], d[l]);
+                    catch {
+                        std::cout << "error!" << std::endl;
+                        continue;
+                    }
+                }
+            }
+        }
     }
+    
+    
+    
+    // int B = 16;  // batch size
+    // int nh = 12; // number of heads
+    // int N = 64;  // sequence length
+    // int d = 64;  // head dimension
+
+    // if (argc == 1) {
+    //     benchmark_attention(B, nh, N, d);
+    // } else {
+    //     B = (int)atoi(argv[1]);
+    //     nh = (int)atoi(argv[2]);
+    //     N = (int)atoi(argv[3]);
+    //     d = (int)atoi(argv[4]);
+    //     benchmark_attention(B, nh, N, d);
+    // }
 
     return 0;
 }
