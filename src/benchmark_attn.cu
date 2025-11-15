@@ -220,10 +220,10 @@ int main(int argc, char* argv[]) {
 
     print_gpu_info();
 
-    int B[]  = {4,8,12,16}
-    int nh[] = {4,8,12,16}
-    int N[]  = {64,128,256}
-    int d[]  = {32,64,128}
+    const int B[]  = {4,8,12,16};
+    const int nh[] = {4,8,12,16};
+    const int N[]  = {64,128,256;
+    const int d[]  = {32,64,128};
 
     for (int i = 0; i < 4; i++){
         for (int j = 0; j < 4; j++){
