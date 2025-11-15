@@ -123,7 +123,7 @@ float* flash_forward(
     size_t Q_size = B * nh * N * d * sizeof(float);
     size_t l_m_size = B * nh * N * sizeof(float);
     
-    printf("Bc = %d, Br = %d\n", Bc, Br);
+    // printf("Bc = %d, Br = %d\n", Bc, Br);
     // printf("Tc = %d, Tr = %d, softmax_scale = %f\n", Tc, Tr, softmax_scale);
     // printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
 
