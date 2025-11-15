@@ -1,12 +1,21 @@
+# gpu info
+=== GPU Information ===
+Name: NVIDIA GeForce RTX 2080 Ti
+Compute Capability: 7.5
+Global Memory: 10.5683 GB
+Shared Memory per Block: 48 KB
+Registers per Block: 65536
+Warp Size: 32
+Max Threads per Block: 1024
+Max Threads per SM: 1024
+Number of SMs: 68
+=================================
+
+# data
+======================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=8, N=64, d=64
 Total Q size: 1 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -20,17 +29,10 @@ Flash Attention:
 
 Avg Speedup: 17.85x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=16, nh=8, N=64, d=64
 Total Q size: 2 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -44,18 +46,10 @@ Flash Attention:
 
 Avg Speedup: 33.23x
 
-
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=32, nh=8, N=64, d=64
 Total Q size: 4 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -69,18 +63,10 @@ Flash Attention:
 
 Avg Speedup: 65.18x
 
-
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=12, N=64, d=64
 Total Q size: 1.5 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -94,18 +80,10 @@ Flash Attention:
 
 Avg Speedup: 23.45x
 
-
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=16, nh=12, N=64, d=64
 Total Q size: 3 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -119,18 +97,10 @@ Flash Attention:
 
 Avg Speedup: 50.00x
 
-
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=32, nh=12, N=64, d=64
 Total Q size: 6 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -144,17 +114,10 @@ Flash Attention:
 
 Avg Speedup: 99.62x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=16, N=64, d=64
 Total Q size: 2 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -168,17 +131,10 @@ Flash Attention:
 
 Avg Speedup: 33.18x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=16, nh=16, N=64, d=64
 Total Q size: 4 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -192,18 +148,10 @@ Flash Attention:
 
 Avg Speedup: 64.94x
 
-
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=32, nh=16, N=64, d=64
 Total Q size: 8 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -217,17 +165,10 @@ Flash Attention:
 
 Avg Speedup: 141.55x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=12, N=128, d=64
 Total Q size: 3 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -241,17 +182,10 @@ Flash Attention:
 
 Avg Speedup: 40.09x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=16, nh=12, N=128, d=64
 Total Q size: 6 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -265,16 +199,10 @@ Flash Attention:
 
 Avg Speedup: 91.98x
 
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=8, N=256, d=64
 Total Q size: 4 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -288,16 +216,10 @@ Flash Attention:
 
 Avg Speedup: 32.77x
 
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=16, nh=8, N=256, d=64
 Total Q size: 8 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -311,17 +233,10 @@ Flash Attention:
 
 Avg Speedup: 74.38x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=12, N=256, d=64
 Total Q size: 6 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:
@@ -335,17 +250,10 @@ Flash Attention:
 
 Avg Speedup: 44.13x
 
-
-
+=====================================================
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=16, N=256, d=64
 Total Q size: 8 MB
-
-Warming up...
-Benchmarking Naive Attention...
-..........
-Benchmarking Flash Attention...
-..........
 
 === RESULTS ===
 Naive Attention:

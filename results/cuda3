@@ -1,0 +1,289 @@
+# gpu info
+=== GPU Information ===
+Name: NVIDIA TITAN V
+Compute Capability: 7.0
+Global Memory: 11.7679 GB
+Shared Memory per Block: 48 KB
+Registers per Block: 65536
+Warp Size: 32
+Max Threads per Block: 1024
+Max Threads per SM: 2048
+Number of SMs: 80
+=================================
+# data
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=8, N=64, d=64
+Total Q size: 1 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 35.139 ms
+  Max: 36.512 ms
+  Avg: 35.453 ms
+Flash Attention:
+  Min: 1.617 ms
+  Max: 1.723 ms
+  Avg: 1.633 ms
+
+Avg Speedup: 21.71x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=8, N=64, d=64
+Total Q size: 2 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 92.215 ms
+  Max: 92.746 ms
+  Avg: 92.373 ms
+Flash Attention:
+  Min: 2.132 ms
+  Max: 3.262 ms
+  Avg: 2.265 ms
+
+Avg Speedup: 40.78x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=32, nh=8, N=64, d=64
+Total Q size: 4 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 271.673 ms
+  Max: 273.530 ms
+  Avg: 271.939 ms
+Flash Attention:
+  Min: 3.822 ms
+  Max: 4.323 ms
+  Avg: 3.898 ms
+
+Avg Speedup: 69.76x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=64, d=64
+Total Q size: 1.5 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 61.846 ms
+  Max: 61.901 ms
+  Avg: 61.877 ms
+Flash Attention:
+  Min: 1.968 ms
+  Max: 3.481 ms
+  Avg: 2.133 ms
+
+Avg Speedup: 29.01x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=12, N=64, d=64
+Total Q size: 3 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 172.680 ms
+  Max: 173.060 ms
+  Avg: 172.767 ms
+Flash Attention:
+  Min: 3.402 ms
+  Max: 4.293 ms
+  Avg: 3.698 ms
+
+Avg Speedup: 46.72x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=32, nh=12, N=64, d=64
+Total Q size: 6 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 755.454 ms
+  Max: 767.403 ms
+  Avg: 761.779 ms
+Flash Attention:
+  Min: 6.202 ms
+  Max: 7.106 ms
+  Avg: 6.310 ms
+
+Avg Speedup: 120.72x
+
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=16, N=64, d=64
+Total Q size: 2 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 92.196 ms
+  Max: 92.484 ms
+  Avg: 92.256 ms
+Flash Attention:
+  Min: 2.128 ms
+  Max: 2.849 ms
+  Avg: 2.233 ms
+
+Avg Speedup: 41.32x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=16, N=64, d=64
+Total Q size: 4 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 271.501 ms
+  Max: 273.028 ms
+  Avg: 271.753 ms
+Flash Attention:
+  Min: 3.831 ms
+  Max: 4.324 ms
+  Avg: 3.900 ms
+
+Avg Speedup: 69.67x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=32, nh=16, N=64, d=64
+Total Q size: 8 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 1363.587 ms
+  Max: 1377.737 ms
+  Avg: 1371.692 ms
+Flash Attention:
+  Min: 6.853 ms
+  Max: 8.044 ms
+  Avg: 7.317 ms
+
+Avg Speedup: 187.48x
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=128, d=64
+Total Q size: 3 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 172.641 ms
+  Max: 172.981 ms
+  Avg: 172.713 ms
+Flash Attention:
+  Min: 4.212 ms
+  Max: 6.023 ms
+  Avg: 4.527 ms
+
+Avg Speedup: 38.15x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=12, N=128, d=64
+Total Q size: 6 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 755.854 ms
+  Max: 766.891 ms
+  Avg: 761.084 ms
+Flash Attention:
+  Min: 7.090 ms
+  Max: 8.894 ms
+  Avg: 7.605 ms
+
+Avg Speedup: 100.08x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=8, N=256, d=64
+Total Q size: 4 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 271.567 ms
+  Max: 273.227 ms
+  Avg: 271.844 ms
+Flash Attention:
+  Min: 11.838 ms
+  Max: 12.315 ms
+  Avg: 11.909 ms
+
+Avg Speedup: 22.83x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=256, d=64
+Total Q size: 6 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 753.367 ms
+  Max: 769.752 ms
+  Avg: 760.416 ms
+Flash Attention:
+  Min: 15.243 ms
+  Max: 16.720 ms
+  Avg: 15.596 ms
+
+Avg Speedup: 48.76x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=16, N=256, d=64
+Total Q size: 8 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 1362.254 ms
+  Max: 1373.472 ms
+  Avg: 1370.271 ms
+Flash Attention:
+  Min: 15.276 ms
+  Max: 17.561 ms
+  Avg: 16.026 ms
+
+Avg Speedup: 85.50x
+
+=========================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=8, N=256, d=64
+Total Q size: 8 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 1360.905 ms
+  Max: 1374.583 ms
+  Avg: 1369.055 ms
+Flash Attention:
+  Min: 15.290 ms
+  Max: 17.559 ms
+  Avg: 15.831 ms
+
+Avg Speedup: 86.48x
+
+
+
+Configuration: B=8, nh=8, N=64, d=64
+Configuration: B=16, nh=8, N=64, d=64
+Configuration: B=32, nh=8, N=64, d=64
+
+Configuration: B=8, nh=12, N=64, d=64
+Configuration: B=16, nh=12, N=64, d=64
+Configuration: B=32, nh=12, N=64, d=64
+
+Configuration: B=8, nh=16, N=64, d=64
+Configuration: B=16, nh=16, N=64, d=64
+Configuration: B=32, nh=16, N=64, d=64
+
+Configuration: B=8, nh=12, N=128, d=64
+Configuration: B=16, nh=12, N=128, d=64
+
+Configuration: B=8, nh=8, N=256, d=64
+Configuration: B=8, nh=12, N=256, d=64
+Configuration: B=8, nh=16, N=256, d=64
+Configuration: B=16, nh=8, N=256, d=64

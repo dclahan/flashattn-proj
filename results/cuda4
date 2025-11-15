@@ -1,0 +1,292 @@
+=== GPU Information ===
+Name: NVIDIA GeForce GTX TITAN X
+Compute Capability: 5.2
+Global Memory: 11.9143 GB
+Shared Memory per Block: 48 KB
+Registers per Block: 65536
+Warp Size: 32
+Max Threads per Block: 1024
+Max Threads per SM: 2048
+Number of SMs: 24
+=================================
+# data
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=8, N=64, d=64
+Total Q size: 1 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 73.967 ms
+  Max: 78.360 ms
+  Avg: 75.947 ms
+Flash Attention:
+  Min: 4.023 ms
+  Max: 6.970 ms
+  Avg: 4.327 ms
+
+Avg Speedup: 17.55x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=8, N=64, d=64
+Total Q size: 2 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 251.982 ms
+  Max: 261.168 ms
+  Avg: 260.223 ms
+Flash Attention:
+  Min: 5.894 ms
+  Max: 14.364 ms
+  Avg: 6.752 ms
+
+Avg Speedup: 38.54x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=32, nh=8, N=64, d=64
+Total Q size: 4 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 967.747 ms
+  Max: 978.650 ms
+  Avg: 973.224 ms
+Flash Attention:
+  Min: 11.305 ms
+  Max: 22.087 ms
+  Avg: 14.306 ms
+
+Avg Speedup: 68.03x
+
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=64, d=64
+Total Q size: 1.5 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 142.209 ms
+  Max: 150.662 ms
+  Avg: 149.656 ms
+Flash Attention:
+  Min: 4.090 ms
+  Max: 11.533 ms
+  Avg: 4.851 ms
+
+Avg Speedup: 30.85x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=12, N=64, d=64
+Total Q size: 3 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 523.557 ms
+  Max: 527.706 ms
+  Avg: 526.165 ms
+Flash Attention:
+  Min: 7.751 ms
+  Max: 21.505 ms
+  Avg: 9.777 ms
+
+Avg Speedup: 53.81x
+
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=32, nh=12, N=64, d=64
+Total Q size: 6 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 3549.217 ms
+  Max: 3566.662 ms
+  Avg: 3554.225 ms
+Flash Attention:
+  Min: 15.449 ms
+  Max: 26.287 ms
+  Avg: 20.746 ms
+
+Avg Speedup: 171.32x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=16, N=64, d=64
+Total Q size: 2 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 249.800 ms
+  Max: 259.081 ms
+  Avg: 258.090 ms
+Flash Attention:
+  Min: 5.862 ms
+  Max: 14.308 ms
+  Avg: 6.717 ms
+
+Avg Speedup: 38.43x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=16, N=64, d=64
+Total Q size: 4 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 971.320 ms
+  Max: 980.432 ms
+  Avg: 974.163 ms
+Flash Attention:
+  Min: 11.436 ms
+  Max: 22.075 ms
+  Avg: 14.399 ms
+
+Avg Speedup: 67.66x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=32, nh=16, N=64, d=64
+Total Q size: 8 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 9300.365 ms
+  Max: 9436.512 ms
+  Avg: 9376.610 ms
+Flash Attention:
+  Min: 21.044 ms
+  Max: 31.766 ms
+  Avg: 29.372 ms
+
+Avg Speedup: 319.23x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=128, d=64
+Total Q size: 3 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 522.795 ms
+  Max: 528.338 ms
+  Avg: 525.568 ms
+Flash Attention:
+  Min: 8.749 ms
+  Max: 22.542 ms
+  Avg: 10.711 ms
+
+Avg Speedup: 49.07x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=12, N=128, d=64
+Total Q size: 6 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 3569.767 ms
+  Max: 3584.431 ms
+  Avg: 3581.405 ms
+Flash Attention:
+  Min: 17.249 ms
+  Max: 27.339 ms
+  Avg: 22.172 ms
+
+Avg Speedup: 161.53x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=8, N=256, d=64
+Total Q size: 4 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 971.395 ms
+  Max: 978.606 ms
+  Avg: 973.929 ms
+Flash Attention:
+  Min: 32.924 ms
+  Max: 43.790 ms
+  Avg: 34.922 ms
+
+Avg Speedup: 27.89x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=256, d=64
+Total Q size: 6 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 3561.759 ms
+  Max: 3583.647 ms
+  Avg: 3578.935 ms
+Flash Attention:
+  Min: 33.601 ms
+  Max: 44.127 ms
+  Avg: 36.738 ms
+
+Avg Speedup: 97.42x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=8, nh=16, N=256, d=64
+Total Q size: 8 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 9290.056 ms
+  Max: 9433.571 ms
+  Avg: 9374.850 ms
+Flash Attention:
+  Min: 49.910 ms
+  Max: 59.874 ms
+  Avg: 53.925 ms
+
+Avg Speedup: 173.85x
+
+========================================================================
+=== Attention Mechanism Benchmark ===
+Configuration: B=16, nh=8, N=256, d=64
+Total Q size: 8 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 9270.691 ms
+  Max: 9426.696 ms
+  Avg: 9370.921 ms
+Flash Attention:
+  Min: 49.874 ms
+  Max: 60.088 ms
+  Avg: 53.942 ms
+
+Avg Speedup: 173.72x
+
+
+
+Configuration: B=8, nh=8, N=64, d=64
+Configuration: B=16, nh=8, N=64, d=64
+Configuration: B=32, nh=8, N=64, d=64
+
+Configuration: B=8, nh=12, N=64, d=64
+Configuration: B=16, nh=12, N=64, d=64
+Configuration: B=32, nh=12, N=64, d=64
+
+Configuration: B=8, nh=16, N=64, d=64
+Configuration: B=16, nh=16, N=64, d=64
+Configuration: B=32, nh=16, N=64, d=64
+
+Configuration: B=8, nh=12, N=128, d=64
+Configuration: B=16, nh=12, N=128, d=64
+
+Configuration: B=8, nh=8, N=256, d=64
+Configuration: B=8, nh=12, N=256, d=64
+Configuration: B=8, nh=16, N=256, d=64
+
+Configuration: B=16, nh=8, N=256, d=64
