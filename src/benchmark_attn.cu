@@ -222,16 +222,16 @@ int main(int argc, char* argv[]) {
 
     const int B[]  = {4,8,12,16};
     const int nh[] = {4,8,12,16};
-    const int N[]  = {64,128,256;
+    const int N[]  = {64,128,256};
     const int d[]  = {32,64,128};
 
     for (int i = 0; i < 4; i++){
         for (int j = 0; j < 4; j++){
             for (int k = 0; k < 3; k++){
                 for (int l = 0; l < 3; l++){
-                    try
+                    try {
                         benchmark_attention(B[i], nh[j], N[k], d[l]);
-                    catch {
+                    } catch {
                         std::cout << "error!" << std::endl;
                         continue;
                     }
