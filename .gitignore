@@ -3,3 +3,6 @@ makefile.txt
 benchmark_full
 arr_mismatch
 naive-matmul-*
+o
+res.txt
+checksum.c 
