@@ -85,23 +85,6 @@ Avg Speedup: 26.52x
 
 =====================================================
 === Attention Mechanism Benchmark ===
-Configuration: B=8, nh=12, N=128, d=64
-Total Q size: 3 MB
-
-=== RESULTS ===
-Naive Attention:
-  Min: 199.131 ms
-  Max: 250.201 ms
-  Avg: 226.242 ms
-Flash Attention:
-  Min: 5.517 ms
-  Max: 49.216 ms
-  Avg: 12.027 ms
-
-Avg Speedup: 18.81x
-
-=====================================================
-=== Attention Mechanism Benchmark ===
 Configuration: B=16, nh=12, N=64, d=64
 Total Q size: 3 MB
 
@@ -193,6 +176,25 @@ Avg Speedup: 113.01x
 
 =====================================================
 === Attention Mechanism Benchmark ===
+Configuration: B=8, nh=12, N=128, d=64
+Total Q size: 3 MB
+
+=== RESULTS ===
+Naive Attention:
+  Min: 199.131 ms
+  Max: 250.201 ms
+  Avg: 226.242 ms
+Flash Attention:
+  Min: 5.517 ms
+  Max: 49.216 ms
+  Avg: 12.027 ms
+
+Avg Speedup: 18.81x
+
+
+
+=====================================================
+=== Attention Mechanism Benchmark ===
 Configuration: B=16, nh=12, N=128, d=64
 Total Q size: 6 MB
 
@@ -246,10 +248,6 @@ Avg Speedup: 49.63x
 === Attention Mechanism Benchmark ===
 Configuration: B=8, nh=12, N=256, d=64
 Total Q size: 6 MB
-
-Warming up...
-Benchmarking Naive Attention...
-Benchmarking Flash Attention...
 
 === RESULTS ===
 Naive Attention:

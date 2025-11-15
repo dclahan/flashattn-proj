@@ -219,18 +219,6 @@ int main(int argc, char* argv[]) {
     std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
 
     print_gpu_info();
-
-    // const int B[]  = {8,12,16};
-    // const int nh[] = {8,12,16};
-    // const int N[]  = {64,128,256};
-    // const int d[]  = {32,64,128};
-
-    // for (int i = 0; i < 3; i++)
-    //     for (int j=0; j <3 ; j++)
-    //         for (int k=0; k < 3; k++)
-    //             for (int l = 0; l < 3; l++)
-    //                 benchmark_attention(B[i], nh[j], N[k], d[l]);
-
     
     int B = 16;  // batch size
     int nh = 12; // number of heads
