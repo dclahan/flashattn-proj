@@ -123,9 +123,9 @@ float* flash_forward(
     size_t Q_size = B * nh * N * d * sizeof(float);
     size_t l_m_size = B * nh * N * sizeof(float);
     
-    printf("Bc = %d, Br = %d\n", Bc, Br);
-    printf("Tc = %d, Tr = %d, softmax_scale = %f\n", Tc, Tr, softmax_scale);
-    printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
+    // printf("Bc = %d, Br = %d\n", Bc, Br);
+    // printf("Tc = %d, Tr = %d, softmax_scale = %f\n", Tc, Tr, softmax_scale);
+    // printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
 
     // Allocate GPU memory
     cudaMalloc(&O, Q_size);
@@ -149,13 +149,13 @@ float* flash_forward(
     const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
     int max_sram_size;
     cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
-    printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
+    // printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
 
     // Set up grid and block dimensions
     dim3 grid_dim(B, nh);  // batch_size x num_heads
     dim3 block_dim(Bc);    // Bc threads per block
 
-    printf("grid dim = %d x %d, block dim = %d\n", B, nh, Bc);
+    // printf("grid dim = %d x %d, block dim = %d\n", B, nh, Bc);
 
     // Launch kernel
     // printf("Launching Forward Kernel\n");
@@ -166,12 +166,11 @@ float* flash_forward(
     // Synchronize to make sure kernel completes
     cudaDeviceSynchronize();
     // Check for kernel launch errors
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("Kernel launch error: %s\n", cudaGetErrorString(err));
-        exit(-1);
-    }
-    
+    // cudaError_t err = cudaGetLastError();
+    // if (err != cudaSuccess) {
+    //     printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+    //     exit(-1);
+    // }
     
     cudaFree(l);
     cudaFree(m);
