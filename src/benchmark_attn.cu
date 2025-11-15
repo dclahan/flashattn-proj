@@ -220,30 +220,27 @@ int main(int argc, char* argv[]) {
 
     print_gpu_info();
 
-    const int B[]  = {4,8,12,16};
-    const int nh[] = {4,8,12,16};
-    const int N[]  = {64,128,256};
-    const int d[]  = {32,64,128};
+    // const int B[]  = {4,8,12,16};
+    // const int nh[] = {4,8,12,16};
+    // const int N[]  = {64,128,256};
+    // const int d[]  = {32,64,128};
 
-    benchmark_attention(B[0], nh[0], N[0], d[0]);
+    // benchmark_attention(B[0], nh[0], N[0], d[0]);
+    
+    int B = 16;  // batch size
+    int nh = 12; // number of heads
+    int N = 64;  // sequence length
+    int d = 64;  // head dimension
 
-    
-    
-    
-    // int B = 16;  // batch size
-    // int nh = 12; // number of heads
-    // int N = 64;  // sequence length
-    // int d = 64;  // head dimension
-
-    // if (argc == 1) {
-    //     benchmark_attention(B, nh, N, d);
-    // } else {
-    //     B = (int)atoi(argv[1]);
-    //     nh = (int)atoi(argv[2]);
-    //     N = (int)atoi(argv[3]);
-    //     d = (int)atoi(argv[4]);
-    //     benchmark_attention(B, nh, N, d);
-    // }
+    if (argc == 1) {
+        benchmark_attention(B, nh, N, d);
+    } else {
+        B = (int)atoi(argv[1]);
+        nh = (int)atoi(argv[2]);
+        N = (int)atoi(argv[3]);
+        d = (int)atoi(argv[4]);
+        benchmark_attention(B, nh, N, d);
+    }
 
     return 0;
 }
