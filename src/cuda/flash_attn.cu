@@ -112,7 +112,7 @@ float* flash_forward(
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
     const int Bc = min(ceil(prop.sharedMemPerBlock/sizeof(float)/(4*d)), (float)N);
-    const int Br = min(Bc,d);
+    const int Br = Bc; // min(Bc,d);
 
     const int Tc = ceil((float)N / Bc); 
     const int Tr = ceil((float)N / Br);
