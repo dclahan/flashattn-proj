@@ -203,14 +203,6 @@ int benchmark_attention(int B, int nh, int N, int d) {
     cudaFree(d_V);
     cudaFree(d_O_naive);
     
-    // std::cout << std::endl;
-    // std::cout << "=== PROFILING WITH NSIGHT ===" << std::endl;
-    // std::cout << "To profile with Nsight Systems:" << std::endl;
-    // std::cout << "  nsys profile --stats=true ./benchmark_attention" << std::endl;
-    // std::cout << std::endl;
-    // std::cout << "To profile with Nsight Compute:" << std::endl;
-    // std::cout << "  ncu --kernel-id ::flash_attn_forward_kernel:1 ./benchmark_attn" << std::endl;
-    // std::cout << "  ncu --kernel-id ::matrix_multiply:1 ./benchmark_attn" << std::endl;
     return 0;
 }
 
@@ -266,30 +258,8 @@ int run_profile(int B, int nh, int N, int d, int naive1_flash0) {
     return 0;
 }
 
-// int main(int argc, char* argv[]) {
-//     std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
-
-//     print_gpu_info();
-    
-//     int B = 16;  // batch size
-//     int nh = 12; // number of heads
-//     int N = 64;  // sequence length
-//     int d = 64;  // head dimension
-
-//     if (argc == 1) {
-//         benchmark_attention(B, nh, N, d);
-//     } else {
-//         B = (int)atoi(argv[1]);
-//         nh = (int)atoi(argv[2]);
-//         N = (int)atoi(argv[3]);
-//         d = (int)atoi(argv[4]);
-//         benchmark_attention(B, nh, N, d);
-//     }
-
-//     return 0;
-// }
 int main(int argc, char* argv[]) {
-    std::cout << "CUDA Attention" << std::endl;
+    std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
 
     print_gpu_info();
     
@@ -305,9 +275,32 @@ int main(int argc, char* argv[]) {
         nh = (int)atoi(argv[2]);
         N = (int)atoi(argv[3]);
         d = (int)atoi(argv[4]);
-        int naive1_flash0 = (int)atoi(argv[5]);
-        run_profile(B, nh, N, d, naive1_flash0);
+        benchmark_attention(B, nh, N, d);
     }
 
     return 0;
 }
+
+// int main(int argc, char* argv[]) {
+//     std::cout << "CUDA Attention" << std::endl;
+
+//     print_gpu_info();
+    
+//     int B = 16;  // batch size
+//     int nh = 12; // number of heads
+//     int N = 64;  // sequence length
+//     int d = 64;  // head dimension
+
+//     if (argc == 1) {
+//         benchmark_attention(B, nh, N, d);
+//     } else {
+//         B = (int)atoi(argv[1]);
+//         nh = (int)atoi(argv[2]);
+//         N = (int)atoi(argv[3]);
+//         d = (int)atoi(argv[4]);
+//         int naive1_flash0 = (int)atoi(argv[5]);
+//         run_profile(B, nh, N, d, naive1_flash0);
+//     }
+
+//     return 0;
+// }
