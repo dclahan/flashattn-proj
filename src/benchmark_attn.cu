@@ -185,8 +185,7 @@ int benchmark_attention(int B, int nh, int N, int d) {
     // Validate results
     std::cout << std::endl;
     std::cout << "=== VALIDATION ===" << std::endl;
-    float tolerance = 13e-2f;
-    if (validate_results(h_O_naive, h_O_flash, std::min(1000, (int)Q_size), tolerance)) {
+    if (validate_results(h_O_naive, h_O_flash, std::min(1000, (int)Q_size), 13e-2f)) {
         std::cout << "Results match within tolerance" << std::endl;
     } else {
         std::cout << "Results don't match!" << std::endl;
@@ -215,8 +214,82 @@ int benchmark_attention(int B, int nh, int N, int d) {
     return 0;
 }
 
+int run_profile(int B, int nh, int N, int d, int naive_flash) {
+    std::cout << "=================================" << std::endl;
+    std::cout << "Configuration: B=" << B << ", nh=" << nh << ", N=" << N << ", d=" << d << std::endl;
+    std::cout << "Total Q size: " << (B * nh * N * d * sizeof(float)) / (1024.0 * 1024.0) << " MB" << std::endl;
+    std::cout << std::endl;
+
+    // Allocate host memory
+    size_t Q_size = B * nh * N * d;
+    size_t KV_size = B * nh * N * d;  // Assuming same sequence length for K, V
+    
+    float *h_Q = new float[Q_size];
+    float *h_K = new float[KV_size];
+    float *h_V = new float[KV_size];
+    float *h_O_naive = new float[Q_size];
+    float *h_O_flash = new float[Q_size];
+
+    // Initialize matrices
+    initialize_matrices(h_Q, h_K, h_V, Q_size, KV_size);
+
+    // Allocate device memory
+    float *d_Q, *d_K, *d_V, *d_O_naive, *d_O_flash;
+    cudaMalloc(&d_Q, Q_size * sizeof(float));
+    cudaMalloc(&d_K, KV_size * sizeof(float));
+    cudaMalloc(&d_V, KV_size * sizeof(float));
+    cudaMalloc(&d_O_naive, Q_size * sizeof(float));
+    cudaMalloc(&d_O_flash, Q_size * sizeof(float));
+
+    // Copy data to device
+    cudaMemcpy(d_Q, h_Q, Q_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_K, h_K, KV_size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_V, h_V, KV_size * sizeof(float), cudaMemcpyHostToDevice);
+
+    if (naive1_flash0)
+        naive_attention(d_Q, d_K, d_V, d_O_naive, B * nh * N, B * nh * N, d);
+    else 
+        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
+
+    // Cleanup
+    delete[] h_Q;
+    delete[] h_K;
+    delete[] h_V;
+    delete[] h_O_naive;
+    delete[] h_O_flash;
+    
+    cudaFree(d_Q);
+    cudaFree(d_K);
+    cudaFree(d_V);
+    cudaFree(d_O_naive);
+    
+    return 0;
+}
+
+// int main(int argc, char* argv[]) {
+//     std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
+
+//     print_gpu_info();
+    
+//     int B = 16;  // batch size
+//     int nh = 12; // number of heads
+//     int N = 64;  // sequence length
+//     int d = 64;  // head dimension
+
+//     if (argc == 1) {
+//         benchmark_attention(B, nh, N, d);
+//     } else {
+//         B = (int)atoi(argv[1]);
+//         nh = (int)atoi(argv[2]);
+//         N = (int)atoi(argv[3]);
+//         d = (int)atoi(argv[4]);
+//         benchmark_attention(B, nh, N, d);
+//     }
+
+//     return 0;
+// }
 int main(int argc, char* argv[]) {
-    std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
+    std::cout << "CUDA Attention" << std::endl;
 
     print_gpu_info();
     
@@ -232,7 +305,8 @@ int main(int argc, char* argv[]) {
         nh = (int)atoi(argv[2]);
         N = (int)atoi(argv[3]);
         d = (int)atoi(argv[4]);
-        benchmark_attention(B, nh, N, d);
+        naive_flash = (int)atoi(argv[5]);
+        run_profile(B, nh, N, d, naive_flash);
     }
 
     return 0;
