@@ -214,7 +214,7 @@ int benchmark_attention(int B, int nh, int N, int d) {
     return 0;
 }
 
-int run_profile(int B, int nh, int N, int d, int naive_flash) {
+int run_profile(int B, int nh, int N, int d) {
     std::cout << "=================================" << std::endl;
     std::cout << "Configuration: B=" << B << ", nh=" << nh << ", N=" << N << ", d=" << d << std::endl;
     std::cout << "Total Q size: " << (B * nh * N * d * sizeof(float)) / (1024.0 * 1024.0) << " MB" << std::endl;
@@ -246,10 +246,7 @@ int run_profile(int B, int nh, int N, int d, int naive_flash) {
     cudaMemcpy(d_K, h_K, KV_size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_V, h_V, KV_size * sizeof(float), cudaMemcpyHostToDevice);
 
-    if (naive1_flash0)
-        naive_attention(d_Q, d_K, d_V, d_O_naive, B * nh * N, B * nh * N, d);
-    else 
-        float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
+    float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
 
     // Cleanup
     delete[] h_Q;
@@ -305,8 +302,7 @@ int main(int argc, char* argv[]) {
         nh = (int)atoi(argv[2]);
         N = (int)atoi(argv[3]);
         d = (int)atoi(argv[4]);
-        naive_flash = (int)atoi(argv[5]);
-        run_profile(B, nh, N, d, naive_flash);
+        run_profile(B, nh, N, d);
     }
 
     return 0;
