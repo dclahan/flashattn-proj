@@ -305,7 +305,7 @@ int main(int argc, char* argv[]) {
         nh = (int)atoi(argv[2]);
         N = (int)atoi(argv[3]);
         d = (int)atoi(argv[4]);
-        naive1_flash0 = (int)atoi(argv[5]);
+        int naive1_flash0 = (int)atoi(argv[5]);
         run_profile(B, nh, N, d, naive1_flash0);
     }
 
