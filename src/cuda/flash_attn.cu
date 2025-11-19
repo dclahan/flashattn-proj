@@ -6,7 +6,6 @@
 #include "flash_attn.h"
 
 // implement scaled dot product attention (softmax(Q @ K^T * softmax_scale) @ V)
-// @ := Matmul
 __global__ void flash_attn_forward_kernel( 
     const float *Q,
     const float *K,
@@ -123,10 +122,6 @@ float* flash_forward(
     size_t Q_size = B * nh * N * d * sizeof(float);
     size_t l_m_size = B * nh * N * sizeof(float);
     
-    // printf("Bc = %d, Br = %d\n", Bc, Br);
-    // printf("Tc = %d, Tr = %d, softmax_scale = %f\n", Tc, Tr, softmax_scale);
-    // printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
-
     // Allocate GPU memory
     cudaMalloc(&O, Q_size);
     cudaMalloc(&l, l_m_size);
@@ -144,17 +139,21 @@ float* flash_forward(
     }
     cudaMemcpy(m, m_host, l_m_size, cudaMemcpyHostToDevice);
     delete[] m_host;
-
+    
     // Calculate SRAM size needed per block
     const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
     int max_sram_size;
     cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
-    // printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
-
+    
     // Set up grid and block dimensions
     dim3 grid_dim(B, nh);  // batch_size x num_heads
     dim3 block_dim(Bc);    // Bc threads per block
-
+    
+    // Print variables
+    // printf("Bc = %d, Br = %d\n", Bc, Br);
+    // printf("Tc = %d, Tr = %d, softmax_scale = %f\n", Tc, Tr, softmax_scale);
+    // printf("Q_size = %d, l_m_size = %d\n", Q_size, l_m_size);
+    // printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
     // printf("grid dim = %d x %d, block dim = %d\n", B, nh, Bc);
 
     // Launch kernel
@@ -178,11 +177,13 @@ float* flash_forward(
     return O;
 }
 
-    // Optimizations:
+    // Further Optimizations:
     //     -[ ] finish and refine flash attn
     //         -[x] dynamic block sizes for different GPU sram specs (defined in paper)
     //         -[ ] get rid of thread-per-row simplification
-    //         -[ ] speed up matmul (run on tensorcore?)
     //         -[ ] Q,K,V make float16 (can I on old GPUs?)
-    //     -[ ] backwards pass -> more complicated, paper is less specific
-    //     -[ ] plug into karpathy gpt model
+    //         -[ ] speed up matmul (run on tensorcore? cant on old GPUs)
+    //     -[ ] backwards pass 
+    //           - more complicated, 
+    //           - re-computes QKV with some extra steps
+    //           - unessecary for profiling 

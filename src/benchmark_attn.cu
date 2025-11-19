@@ -12,11 +12,6 @@
 #include "cuda/flash_attn.h"
 #include "cuda/naive_attn.h"
 
-// const int B = 16;  // batch size
-// const int nh = 12; // number of heads
-// const int N = 64;  // sequence length
-// const int d = 64;  // head dimension
-
 void print_gpu_info() {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
@@ -46,9 +41,9 @@ void initialize_matrices(float* Q, float* K, float* V, int size_Q, int size_KV) 
 
 bool validate_results(float* result1, float* result2, int size, float tolerance = 1e-4f) {
     for (int i = 0; i < size; i++) {
-        // std::cout << result1[i] << " , " << result2[i] << std::endl;
         if (std::abs(result1[i] - result2[i]) > tolerance) {
-            std::cout << "Mismatch at index " << i << ": " << result1[i] << " vs " << result2[i] << std::endl;
+            std::cout << "Mismatch at index " << i << ": ";
+            std::cout << result1[i] << " vs " << result2[i] << std::endl;
             return false;
         }
     }
@@ -61,9 +56,9 @@ int benchmark_attention(int B, int nh, int N, int d) {
     std::cout << "Total Q size: " << (B * nh * N * d * sizeof(float)) / (1024.0 * 1024.0) << " MB" << std::endl;
     std::cout << std::endl;
 
-    // Allocate host memory
+    // Allocate host memory (assume QKV same size)
     size_t Q_size = B * nh * N * d;
-    size_t KV_size = B * nh * N * d;  // Assuming same sequence length for K, V
+    size_t KV_size = B * nh * N * d;
     
     float *h_Q = new float[Q_size];
     float *h_K = new float[KV_size];
@@ -87,12 +82,12 @@ int benchmark_attention(int B, int nh, int N, int d) {
     cudaMemcpy(d_K, h_K, KV_size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_V, h_V, KV_size * sizeof(float), cudaMemcpyHostToDevice);
 
-    // Warm-up runs
+    // Warm-up
     std::cout << "Warming up..." << std::endl;
     for (int i = 0; i < 3; ++i) {
         naive_attention(d_Q, d_K, d_V, d_O_naive, B * nh * N, B * nh * N, d);
         float* flash_result = flash_forward(d_Q, d_K, d_V, B, nh, N, d);
-        if (i == 0) cudaFree(flash_result);  // Free after first warm-up
+        if (i == 0) cudaFree(flash_result);
     }
     cudaDeviceSynchronize();
 
@@ -120,7 +115,6 @@ int benchmark_attention(int B, int nh, int N, int d) {
         cudaEventDestroy(stop);
     }
 
-    // Copy naive result back for validation
     cudaMemcpy(h_O_naive, d_O_naive, Q_size * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Benchmark Flash Attention
@@ -142,7 +136,6 @@ int benchmark_attention(int B, int nh, int N, int d) {
         cudaEventElapsedTime(&milliseconds, start, stop);
         flash_times.push_back(milliseconds);
         
-        // Copy result on last run for validation
         if (i == num_runs - 1) {
             cudaMemcpy(h_O_flash, flash_result, Q_size * sizeof(float), cudaMemcpyDeviceToHost);
         }
@@ -260,11 +253,10 @@ int run_profile(int B, int nh, int N, int d, int naive1_flash0) {
 
 int main(int argc, char* argv[]) {
     std::cout << "CUDA Attention Benchmarking Tool" << std::endl;
-
     print_gpu_info();
     
-    int B = 16;  // batch size
-    int nh = 12; // number of heads
+    int B = 32;  // batch size
+    int nh = 16; // number of heads
     int N = 64;  // sequence length
     int d = 64;  // head dimension
 
@@ -275,22 +267,20 @@ int main(int argc, char* argv[]) {
         nh = (int)atoi(argv[2]);
         N = (int)atoi(argv[3]);
         d = (int)atoi(argv[4]);
+
         benchmark_attention(B, nh, N, d);
     }
 
     return 0;
 }
 
+// to run profile on single kernel (Naive or Flash), make this the main function 
 // int main(int argc, char* argv[]) {
-//     std::cout << "CUDA Attention" << std::endl;
-
 //     print_gpu_info();
-    
 //     int B = 16;  // batch size
 //     int nh = 12; // number of heads
 //     int N = 64;  // sequence length
 //     int d = 64;  // head dimension
-
 //     if (argc == 1) {
 //         benchmark_attention(B, nh, N, d);
 //     } else {
@@ -301,6 +291,5 @@ int main(int argc, char* argv[]) {
 //         int naive1_flash0 = (int)atoi(argv[5]);
 //         run_profile(B, nh, N, d, naive1_flash0);
 //     }
-
 //     return 0;
 // }

@@ -1,4 +1,3 @@
 #pragma once
 
-// void naive_attention(const float* Q, const float* K, const float* V, float* O, int N, int M, int d);
 int naive_attention(const float*, const float*, const float*, float*, int, int, int);
