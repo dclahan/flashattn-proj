@@ -11,8 +11,7 @@ all:
 	@echo "           nh = number of heads"
 	@echo "           N  = sequence length"
 	@echo "           d  = head dimension"
-	@echo "       run_nsys profile"
-	@echo "       run_nsight // only on compatable arch"
+	@echo "       make run_nsys"
 
 use_tmp_dir:
 	@mkdir ~/tmp_dir
@@ -47,9 +46,6 @@ run:
  
 run_nsys:
 	nsys profile --stats=true ./$(TARGET)
-
-run_nsight:
-	ncu --kernel-id ::flash_attn_forward_kernel:4 ./$(TARGET)
 
 clean:
 	rm -rf ~/tmp_dir $(TARGET)
