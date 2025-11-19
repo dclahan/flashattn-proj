@@ -11,7 +11,9 @@ all:
 	@echo "           nh = number of heads"
 	@echo "           N  = sequence length"
 	@echo "           d  = head dimension"
-	@echo "       make run_nsys"
+	@echo "       make run-nsys"
+	@echo "       make clean"
+	@echo "       make clean-all"
 
 use_tmp_dir:
 	@mkdir ~/tmp_dir
@@ -44,7 +46,7 @@ cuda5:
 run:
 	./$(TARGET) $(B) $(nh) $(N) $(d)
  
-run_nsys:
+run-nsys:
 	nsys profile --stats=true ./$(TARGET)
 
 clean:
