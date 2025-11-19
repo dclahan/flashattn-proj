@@ -11,8 +11,8 @@ all:
 	@echo "           nh = number of heads"
 	@echo "           N  = sequence length"
 	@echo "           d  = head dimension"
-	@echo "       make run-nsys"
 	@echo "       make clean"
+	@echo "       make run-nsys"
 	@echo "       make clean-all"
 
 use_tmp_dir:
